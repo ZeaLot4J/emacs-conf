@@ -12,7 +12,7 @@
 (defun open-init-file()
   (interactive)
   (find-file "~/.emacs.d/lisp/init-common.el"))
-(global-set-key (kbd "<f2>") 'open-init-file)
+(global-set-key (kbd "<f1>") 'open-init-file)
 ;; 开启补全模式
 (global-company-mode t)
 ;; 禁止备份文件
@@ -20,7 +20,6 @@
 ;; 禁止自动保存
 (setq auto-save-default nil)
 ;; 按下C-x C-r 列出最近打开文件
-
 (recentf-mode 1)
 (setq recentf-max-menu-items 25)
 (global-set-key "\C-x\ \C-r" 'recentf-open-files)
@@ -75,14 +74,14 @@
   (indent-region (point-min) (point-max)))
 (defun indent-region-or-buffer ()
   (interactive)
-list-faces-sample-text  (save-excursion
-    (if (region-active-p)
-	(progn
-	  (indent-region (region-beginning) (region-end))
-	  (message "Indenting region...done"))
-      (progn
-	(indent-buffer)
-	(message "Indenting buffer...done")))))
+  list-faces-sample-text  (save-excursion
+			    (if (region-active-p)
+				(progn
+				  (indent-region (region-beginning) (region-end))
+				  (message "Indenting region...done"))
+			      (progn
+				(indent-buffer)
+				(message "Indenting buffer...done")))))
 (global-set-key (kbd "C-M-\\") 'indent-region-or-buffer)
 
 ;; 用y or n代替yes or no
@@ -130,7 +129,7 @@ list-faces-sample-text  (save-excursion
 (global-set-key (kbd "C--") 'er/contract-region)
 
 ;; 批量编辑
-(require 'iedit)
+					;(require 'iedit)
 ;; org模式下开启代码高亮
 (setq org-src-fontify-natively t)
 
@@ -141,16 +140,74 @@ list-faces-sample-text  (save-excursion
 (global-set-key (kbd "<C-right>") 'windmove-right)
 
 ;; which key模式，打开快捷键提示
-;(which-key-mode t)
-;(setq which-key-side-window-location 'right)
-
-;; 复制到系统剪切板和从剪切板粘贴
-(global-set-key (kbd "C-S-c") 'clipboard-kill-ring-save)
-(global-set-key (kbd "C-S-v") 'clipboard-yank)
+					;(which-key-mode t)
+					;(setq which-key-side-window-location 'right)
 
 ;; 有道词典
 (global-set-key (kbd "C-c y") 'youdao-dictionary-search-at-point+)
 ;; 缓存URL
 (setq url-automatic-caching t)
+;; 关闭错误提示音和闪烁
+(setq visible-bell nil
+      ring-bell-function 'ignore)
+;; emacs内部的复制和粘贴对系统剪切板生效
+(setq select-enable-clipboard t)
+;; minibuffer处显示时间
+(display-time-mode t)
+(setq display-time-24hr-format t)
+(setq display-time-day-and-date t)
+
+
+;; 类似于vim的f命令
+(defun wy-go-to-char (n char)
+  "Move forward to Nth occurence of CHAR.
+Typing `wy-go-to-char-key' again will move forwad to the next Nth
+occurence of CHAR."
+  (interactive "p\ncGo to char: ")
+  (search-forward (string char) nil nil n)
+  (while (char-equal (read-char)
+		     char)
+    (search-forward (string char) nil nil n))
+  (setq unread-command-events (list last-input-event)))
+(define-key global-map (kbd "C-c f") 'wy-go-to-char)
+
+;; 快速跳转到指定行
+(global-set-key (kbd "<f5>") 'goto-line)
+;; 开始录制宏
+(global-set-key (kbd "<f2>") 'kmacro-start-macro-or-insert-counter)
+;; 结束录制宏或者执行宏
+(global-set-key (kbd "<f3>") 'kmacro-end-or-call-macro)
+;; 关闭当前buffer
+(global-set-key (kbd "<f4>") 'kill-this-buffer)
+
+
+;; 复制当前行
+(global-set-key "\M-w"
+		(lambda ()
+		  (interactive)
+		  (if mark-active
+		      (kill-ring-save (region-beginning)
+				      (region-end))
+		    (progn
+		      (kill-whole-line)
+		      (yank)
+		      (message "copied line")))))
+
+
+;; 删除当前行
+;;也可以(global-set-key (kbd "C-S-k") 'kill-whole-line)
+(global-set-key "\C-w"
+		(lambda ()
+		  (interactive)
+		  (if mark-active
+		      (kill-region (region-beginning)
+				   (region-end))
+		    (progn
+		      (kill-whole-line))
+		    (message "killed line"))))
+
+;; 替换
+(global-set-key (kbd "C-r") 'query-replace)
 
 (provide 'init-common)
+
