@@ -1,5 +1,7 @@
 ;; 显示行号
 (global-linum-mode t)
+;; 显示列号 (line number, column number)
+(setq column-number-mode t)
 ;; 关闭工具条
 (tool-bar-mode -1)
 ;; 关闭滚动条
@@ -190,29 +192,41 @@ occurence of CHAR."
 		    (yank)
 		    (message "copied line"))))
 ;; 删除当前行
-(global-set-key (kbd "C-S-k") 'kill-whole-line)
-
+(global-set-key (kbd "C-k") 'kill-whole-line)
 ;; 替换
 (global-set-key (kbd "C-r") 'query-replace)
 
-;; 两次ESC取代C-g (有问题)
-					;(global-set-key (kbd "ESC ESC") 'keyboard-quit)
+
+;; 一行超过80列则换行，配合M-q和auto-fill-mode使用
+(setq default-fill-column 80)
+;; 新建的文件默认为text-mode 
+(setq default-major-mode 'text-mode)
+
+;; 平滑滚动
+(require 'smooth-scrolling)
+(smooth-scrolling-mode t)
 
 
+;; 设置邮箱
+(setq user-full-name "Lancelot Zealot")
+(setq user-mail-address "704956780@qq.com")
 
-
-
-
+;; 光标不闪烁
+(blink-cursor-mode -1)
 
 
 ;; 目前还有
 ;; C-m
 ;; C-j
-;; C-.
+;; C-. 预计为vim的m标记跳转功能
 ;; C-,
 ;; C-;
 ;; 没有用到
 
 
 (provide 'init-common)
+
+
+
+
 

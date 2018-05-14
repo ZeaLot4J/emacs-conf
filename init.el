@@ -21,7 +21,9 @@
      ("melpa-cn" . "http://elpa.emacs-china.org/melpa/"))))
  '(package-selected-packages
    (quote
-    (which-key iedit expand-region js2-mode web-mode smex smartparens monokai-theme company))))
+    (smooth-scroll which-key iedit expand-region js2-mode web-mode smex smartparens monokai-theme company)))
+ '(send-mail-function (quote mailclient-send-it))
+ '(smooth-scroll-margin 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
