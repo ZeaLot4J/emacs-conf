@@ -129,7 +129,7 @@
 (global-set-key (kbd "C--") 'er/contract-region)
 
 ;; 批量编辑
-					;(require 'iedit)
+(require 'iedit)
 ;; org模式下开启代码高亮
 (setq org-src-fontify-natively t)
 
@@ -169,45 +169,50 @@ occurence of CHAR."
 		     char)
     (search-forward (string char) nil nil n))
   (setq unread-command-events (list last-input-event)))
-(define-key global-map (kbd "C-c f") 'wy-go-to-char)
+(define-key global-map (kbd "<f3>") 'wy-go-to-char)
 
 ;; 快速跳转到指定行
-(global-set-key (kbd "<f5>") 'goto-line)
+(global-set-key (kbd "<f2>") 'goto-line)
 ;; 开始录制宏
-(global-set-key (kbd "<f2>") 'kmacro-start-macro-or-insert-counter)
+(global-set-key (kbd "<f7>") 'kmacro-start-macro-or-insert-counter)
 ;; 结束录制宏或者执行宏
-(global-set-key (kbd "<f3>") 'kmacro-end-or-call-macro)
-;; 关闭当前buffer
-(global-set-key (kbd "<f4>") 'kill-this-buffer)
+(global-set-key (kbd "<f8>") 'kmacro-end-or-call-macro)
+;; 关闭当前buffer以及窗口
+(global-set-key (kbd "<f4>") 'kill-buffer-and-window)
 
 
 ;; 复制当前行
-(global-set-key "\M-w"
+(global-set-key "\C-j"
 		(lambda ()
 		  (interactive)
-		  (if mark-active
-		      (kill-ring-save (region-beginning)
-				      (region-end))
-		    (progn
-		      (kill-whole-line)
-		      (yank)
-		      (message "copied line")))))
-
-
+		  (progn
+		    (kill-whole-line)
+		    (yank)
+		    (message "copied line"))))
 ;; 删除当前行
-;;也可以(global-set-key (kbd "C-S-k") 'kill-whole-line)
-(global-set-key "\C-w"
-		(lambda ()
-		  (interactive)
-		  (if mark-active
-		      (kill-region (region-beginning)
-				   (region-end))
-		    (progn
-		      (kill-whole-line))
-		    (message "killed line"))))
+(global-set-key (kbd "C-S-k") 'kill-whole-line)
 
 ;; 替换
 (global-set-key (kbd "C-r") 'query-replace)
+
+;; 两次ESC取代C-g (有问题)
+					;(global-set-key (kbd "ESC ESC") 'keyboard-quit)
+
+
+
+
+
+
+
+
+;; 目前还有
+;; C-m
+;; C-j
+;; C-.
+;; C-,
+;; C-;
+;; 没有用到
+
 
 (provide 'init-common)
 
