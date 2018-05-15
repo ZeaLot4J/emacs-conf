@@ -6,3 +6,7 @@ session.*
 tutorial/
 url/
 eshell/
+elpa/
+*~
+network-security.data
+*.desktop*
