@@ -13,7 +13,6 @@
 ;; 确保当包未安装时会自动安装
 (setq use-package-always-ensure t)
 
-
 ;; ahungry主题
 (use-package ahungry-theme
   :config
@@ -25,13 +24,14 @@
 
 ;; 开启在minibuffer中继续打开minibuffer的功能
 (setq enable-recursive-minibuffers t)
-;; 打开文件，M-x，描述函数，描述变量和搜索文件时，会出现可选择列表
+;; 打开文件，M-x，描述函数，描述变量，搜索文件，查看当前函数列表时，会出现可选择列表
 (use-package counsel
   :bind (("C-x C-f" . counsel-find-file)
 	 ("M-x" . counsel-M-x)
 	 ("C-h f" . counsel-describe-function)
 	 ("C-h v" . counsel-describe-variable)
-	 ("C-x C-l" . counsel-locate)))
+	 ("C-x C-l" . counsel-locate)
+	 ("M-s i" . counsel-imenu)))
 
 
 ;; 搜索字符串时，会出现可选择列表
@@ -81,9 +81,19 @@
   (global-company-mode t))
 
 
-;; 背景透明
-(set-frame-parameter (selected-frame) 'alpha '(85 . 50))
-(add-to-list 'default-frame-alist 'alpha '(85 . 50))
+(use-package magit
+  :bind ("C-x g" . git-status))
+
+(use-package lispy
+  :config
+  (add-hook 'emacs-lisp-mode-hook 'lispy-mode))
+
+
+
+;; 按下C-x C-r 列出最近打开文件
+(recentf-mode 1)
+(setq recentf-max-menu-items 25)
+(global-set-key (kbd "C-x C-r") 'recentf-open-files)
 
 ;; 显示行号
 (global-linum-mode t)
@@ -95,6 +105,55 @@
 (scroll-bar-mode -1)
 ;; 关闭菜单
 (menu-bar-mode -1)
+;; 选中文本时，按下任意键，会删除原文本，而不是在尾部追加
+(delete-selection-mode t)
+;; 高亮匹配的括号
+(add-hook 'emacs-lisp-mode-hook 'show-paren-mode)
+;; 高亮距光标最近的配对括号
+(define-advice show-paren-function (:around (fn) fix-show-paren-function)
+  (cond ((looking-at-p "\\s(") (funcall fn))
+	(t (save-excursion
+	     (ignore-errors (backward-up-list))
+	     (funcall fn)))))
+;; 高亮光标所在行
+(global-hl-line-mode t)
+;; minibuffer处显示时间
+(display-time-mode t)
+(setq display-time-24hr-format t)
+(setq display-time-day-and-date t)
+;; occur模式下直接对选择当前选中的字符进行查找
+(defun occur-dwim ()
+  (interactive)
+  (push (if (region-active-p)
+	    (buffer-substring-no-properties
+	     (region-beginning)
+	     (region-end))
+	  (let ((sym (thing-at-point 'symbol)))
+	    (when (stringp sym))))
+	regexp-history)
+  (call-interactively 'occur))
+(global-set-key (kbd "M-s o") 'occur-dwim)
+;; 光标停止闪烁
+(blink-cursor-mode -1)
+;; 退出emacs时保存桌面 
+(desktop-save-mode t)
+;; 在dired模式下，访问文件永远只有一个buffer
+(with-eval-after-load 'dired
+  (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file))
+(put 'dired-find-alternate-file 'disabled nil)
+;; dired模式下删除和拷贝目录时，总是递归执行
+(setq dired-recursive-copies 'always)
+(setq dired-recursive-deletes 'always)
+
+
+
+
+
+
+
+
+;; 背景透明
+(set-frame-parameter (selected-frame) 'alpha '(85 . 50))
 ;; 当打开emacs时，不显示欢迎界面
 (setq inhibit-splash-screen t)
 ;; 按F2打开配置文件
@@ -106,33 +165,12 @@
 (setq make-backup-files nil)
 ;; 禁止自动保存
 (setq auto-save-default nil)
-;; 按下C-x C-r 列出最近打开文件
-(recentf-mode 1)
-(setq recentf-max-menu-items 25)
-(global-set-key "\C-x\ \C-r" 'recentf-open-files)
-;; 选中文本时，按下任意键，会删除原文本，而不是在尾部追加
-(delete-selection-mode t)
 ;; 全屏打开
 (setq initial-frame-alist (quote ((fullscreen . maximized))))
-;; 高亮匹配的括号
-(add-hook 'emacs-lisp-mode-hook 'show-paren-mode)
-
-;; 高亮距光标最近的配对括号
-(define-advice show-paren-function (:around (fn) fix-show-paren-function)
-  (cond ((looking-at-p "\\s(") (funcall fn))
-	(t (save-excursion
-	     (ignore-errors (backward-up-list))
-	     (funcall fn)))))
-
-
-;; 高亮光标所在行
-(global-hl-line-mode t)
-
 ;; 查询函数，变量，和按键所在的文件定义
 (global-set-key "\C-h\ \C-f" 'find-function)
 (global-set-key "\C-h\ \C-v" 'find-variable)
 (global-set-key "\C-h\ \C-k" 'find-function-on-key)
-
 ;; 全文件格式化
 (defun indent-buffer ()
   (interactive)
@@ -148,46 +186,15 @@
 				(indent-buffer)
 				(message "Indenting buffer...done")))))
 (global-set-key (kbd "C-M-\\") 'indent-region-or-buffer)
-
 ;; 用y or n代替yes or no
 (fset 'yes-or-no-p 'y-or-n-p)
-;; dired模式下删除和拷贝目录时，总是递归执行
-(setq dired-recursive-copies 'always)
-(setq dired-recursive-deletes 'always)
-
-;; 在dired模式下，访问文件永远只有一个buffer
-(put 'dired-find-alternate-file 'disabled nil)
-(with-eval-after-load 'dired
-  (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file))
-
-
-
-
-;; occur模式下直接对选择当前选中的字符进行查找
-(defun occur-dwim ()
-  (interactive)
-  (push (if (region-active-p)
-	    (buffer-substring-no-properties
-	     (region-beginning)
-	     (region-end))
-	  (let ((sym (thing-at-point 'symbol)))
-	    (when (stringp sym))))
-	regexp-history)
-  (call-interactively 'occur))
-(global-set-key (kbd "M-s o") 'occur-dwim)
-;; 显示当前文件的函数列表
-(global-set-key (kbd "M-s i") 'counsel-imenu)
-
 ;; org模式下开启代码高亮
 (setq org-src-fontify-natively t)
-
 ;; C-方向键，在多个窗口间移动光标
 (global-set-key (kbd "<C-up>") 'windmove-up)
 (global-set-key (kbd "<C-down>") 'windmove-down)
 (global-set-key (kbd "<C-left>") 'windmove-left)
 (global-set-key (kbd "<C-right>") 'windmove-right)
-
-
 ;; 缓存URL
 (setq url-automatic-caching t)
 ;; 关闭错误提示音和闪烁
@@ -195,12 +202,6 @@
       ring-bell-function 'ignore)
 ;; emacs内部的复制和粘贴对系统剪切板生效
 (setq select-enable-clipboard t)
-;; minibuffer处显示时间
-(display-time-mode t)
-(setq display-time-24hr-format t)
-(setq display-time-day-and-date t)
-
-
 ;; 类似于vim的f命令
 (defun wy-go-to-char (n char)
   "Move forward to Nth occurence of CHAR.
@@ -213,7 +214,6 @@ occurence of CHAR."
     (search-forward (string char) nil nil n))
   (setq unread-command-events (list last-input-event)))
 (define-key global-map (kbd "<f3>") 'wy-go-to-char)
-
 ;; 快速跳转到指定行
 (global-set-key (kbd "<f2>") 'goto-line)
 ;; 开始录制宏
@@ -222,8 +222,6 @@ occurence of CHAR."
 (global-set-key (kbd "<f8>") 'kmacro-end-or-call-macro)
 ;; 关闭当前buffer以及窗口
 (global-set-key (kbd "<f4>") 'kill-buffer-and-window)
-
-
 ;; 复制当前行
 (global-set-key "\C-j"
 		(lambda ()
@@ -236,20 +234,10 @@ occurence of CHAR."
 (global-set-key (kbd "C-k") 'kill-whole-line)
 ;; 替换
 (global-set-key (kbd "C-r") 'query-replace)
-
-
 ;; 一行超过80列则换行，配合M-q和auto-fill-mode使用
 (setq default-fill-column 80)
-
-;; 光标停止闪烁
-(blink-cursor-mode -1)
-
-
-
-;; 退出emacs时保存桌面 
-(desktop-save-mode t)
-
-
+;; 打开新文件时为text-mode
+(setq default-major-mode 'text-mode)
 ;; 标记一个保存点，供后续操作之后跳转回来，类似vim的m
 (global-set-key (kbd "C-,")
 		'(lambda ()
@@ -260,21 +248,60 @@ occurence of CHAR."
 		'(lambda ()
 		   (interactive)
 		   (jump-to-register ?\`)))
-
 ;; 邮件配置,需要.authinfo
 (setq user-full-name "Lancelot Zealot")
 (setq user-mail-address "18879538430@163.com")
 (setq smtpmail-smtp-server "smtp.163.com")
 (setq smtpmail-smtp-service 25)
-(setq send-mail-function (quote smtpmail-send-it))
-
+(setq send-mail-function ''smtpmail-send-it)
 ;; eww浏览器默认搜索引擎
 (setq eww-search-prefix "https://www.bing.com/search?q=")
 
+
+;; M-up M-down移动光标所在行
+(defun move-text-internal (arg)
+  (cond
+   ((and mark-active transient-mark-mode)
+    (if (> (point) (mark))
+        (exchange-point-and-mark))
+    (let ((column (current-column))
+          (text (delete-and-extract-region (point) (mark))))
+      (forward-line arg)
+      (move-to-column column t)
+      (set-mark (point))
+      (insert text)
+      (exchange-point-and-mark)
+      (setq deactivate-mark nil)))
+   (t
+    (let ((column (current-column)))
+      (beginning-of-line)
+      (when (or (> arg 0) (not (bobp)))
+        (forward-line)
+        (when (or (< arg 0) (not (eobp)))
+          (transpose-lines arg))
+        (forward-line -1))
+      (move-to-column column t)))))
+(defun move-text-down (arg)
+  "Move region (transient-mark-mode active) or current line
+  arg lines down."
+  (interactive "*p")
+  (move-text-internal arg))
+(defun move-text-up (arg)
+  "Move region (transient-mark-mode active) or current line
+  arg lines up."
+  (interactive "*p")
+  (move-text-internal (- arg)))
+(global-set-key (kbd "<M-down>") 'move-text-down)
+(global-set-key (kbd "<M-up>") 'move-text-up)
+
+;; 生成键盘宏，复制光标所在的单词，需要expand-region包
+(fset 'copy-word-at-point
+   [?\C-= ?\M-w])
+;; C-`方便复制光标所在的单词
+(global-set-key (kbd "C-`") 'copy-word-at-point)
 
 ;; 目前还有
 ;; C-i
 ;; C-m
 ;; C-;
 ;; 没有用到
-
