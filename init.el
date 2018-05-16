@@ -298,8 +298,7 @@ occurence of CHAR."
    [?\C-= ?\M-w])
 (global-set-key (kbd "C-`") 'copy-word-at-point)
 
-;; 目前还有
+
 ;; C-i
 ;; C-m
 ;; C-;
-;; 没有用到
