@@ -43,8 +43,8 @@
   :config
   (ivy-mode 1)
   (setq ivy-use-virtual-buffers t))
-;; smooth scroll
-(use-package smooth-scroll
+;; smooth scrolling
+(use-package smooth-scrolling
   :config
   (smooth-scrolling-mode t)
   (setq smooth-scroll-margin 2))
@@ -92,6 +92,8 @@
 (recentf-mode 1)
 (setq recentf-max-menu-items 25)
 (global-set-key (kbd "C-x C-r") 'recentf-open-files)
+;; open recent files once emacs starts
+(recentf-open-files)
 
 ;; display line number
 (global-linum-mode t)
@@ -302,3 +304,17 @@ occurence of CHAR."
 ;; C-i
 ;; C-m
 ;; C-;
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (youdao-dictionary web-mode use-package smooth-scrolling smartparens monokai-theme magit lispy js2-mode expand-region counsel company ahungry-theme))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
