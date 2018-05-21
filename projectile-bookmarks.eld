@@ -1,0 +1,1 @@
+("~/.emacs.d/" "~/Documents/academy/ror/sample_app/")

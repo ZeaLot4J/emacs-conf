@@ -3,6 +3,7 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+	counsel-M-x
 	dabbrev-expand
 	lispy-braces
 	lispy-brackets
@@ -82,6 +83,7 @@
 	special-lispy-widen
 	special-lispy-x
 	special-pop-tag-mark
+	undefined
 	xref-find-apropos
 	))
 

@@ -1,22 +1,25 @@
 ;; Author: Lancelot Zealot
 ;; Date: 2018-05-15 Tuesday 21:11:52 CST
-;; Filename: Emacs configuration
+;; File description: Emacs configuration
 
 ;; emacs package sources
 (package-initialize)
-(setq package-archives
+(setq package-archives			;
       '(("melpa-stable" . "http://stable.melpa.org/packages/")
 	("gnu" . "http://elpa.gnu.org/packages/")
 	("gnu-cn" . "http://elpa.emacs-china.org/gnu/")
 	("melpa-cn" . "http://elpa.emacs-china.org/melpa/")))
 
+
 ;; ensure packages that are not installed yet will be installed automatically
 (setq use-package-always-ensure t)
 
 ;; ahungry theme
-(use-package ahungry-theme
-  :config
-  (load-theme 'ahungry t))
+(use-package ahungry-theme)
+
+(if (display-graphic-p)
+    (load-theme 'ahungry t)
+  (load-theme 'monokai t))
 
 ;; youdao dictionary
 (use-package youdao-dictionary
@@ -39,6 +42,7 @@
   :bind ("C-s" . swiper))
 
 ;; dependency of counsel and swiper
+;; what's more, it makes switch-to-buffer display a list
 (use-package ivy
   :config
   (ivy-mode 1)
@@ -49,48 +53,97 @@
   (smooth-scrolling-mode t)
   (setq smooth-scroll-margin 2))
 
-;; multi-editing with C-;
-(use-package iedit)
 ;; expand or contract selected region
 (use-package expand-region
   :bind (("C-=" . er/expand-region)
 	 ("C--" . er/contract-region)))
 ;; js mode
-(use-package js2-mode)
+(use-package js2-mode
+  :config
+  (add-to-list 'auto-mode-alist
+	       '("\\.js" . js2-mode)))
 ;; web mode
 (use-package web-mode
   :config
-  (add-hook 'web-mode-hook '(lambda () ((setq web-mode-markup-indent-offset 2)
-					(setq web-mode-css-indent-offset 2)
-					(setq web-mode-code-indent-offset 2)))))
-(setq auto-mode-alist
-      (append
-       '(("\\.js\\'" . js2-mode)
-	 ("\\.html\\'" . web-mode))
-       auto-mode-alist))
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-css-indent-offset 2)
+  (setq web-mode-code-indent-offset 2)
+  (add-to-list 'auto-mode-alist
+	       '("\\.html" . web-mode)))
 
 
-;; complete parentheses smartly, including () [] {} ""
+
+;; complete parentheses smartly, including () [] {} "" <> <%%>
 (use-package smartparens
   :config
-  (smartparens-global-mode t))
+  (smartparens-global-mode t)
+  (sp-with-modes '(web-mode)
+    (sp-local-pair "<" ">")
+    (sp-local-pair "<%" "%>")))
 ;; complete strings
 (use-package company
+  :bind ("M-/" . company-complete)
   :config
   (global-company-mode t))
 
+
 ;; emacs git
 (use-package magit
-  :bind ("C-x g" . git-status))
+  :bind ("C-x g" . magit-status))
 
 ;; convenient lisp mode
 (use-package lispy
   :config
   (add-hook 'emacs-lisp-mode-hook 'lispy-mode))
 
+;; code templates
+(use-package yasnippet
+  :config
+  (add-hook 'enh-ruby-mode-hook 'yas-minor-mode)
+  (add-hook 'web-mode-hook 'yas-minor-mode)
+  (add-hook 'js2-mode-hook 'yas-minor-mode)
+  (add-hook 'C-mode-hook 'yas-minor-mode)
+  (add-hook 'C++-mode-hook 'yas-minor-mode))
+(use-package yasnippet-snippets)
+
+;; powerful multiple cursor operations instead of iedit
+(use-package multiple-cursors
+  :bind (("C->"           . mc/mark-next-like-this)
+	 ("C-<"           . mc/mark-previous-like-this)
+	 ("C-M->"         . mc/skip-to-next-like-this)
+	 ("C-M-<"         . mc/skip-to-previous-like-this)
+	 ("C-c C-<"       . mc/mark-all-like-this)
+	 ("C-S-<mouse-1>" . mc/add-cursor-on-click)
+	 ("C-;"           . mc/mark-all-symbols-like-this)))
+
+;; config for ruby dev
+(use-package enh-ruby-mode
+  :config
+  (add-to-list 'auto-mode-alist
+	       '("\\(?:\\.rb\\|ru\\|rake\\|thor\\|jbuilder\\|gemspec\\|podspec\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'" . enh-ruby-mode)))
+
+;; project manager
+(use-package projectile
+  :config
+  (setq projectile-completion-system 'default))
+
+;; directory tree
+(use-package neotree
+  :bind ("<f9>" . neotree-toggle)
+  :config
+  (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
+
+;; tree icons
+(use-package all-the-icons)
+;; dired mode icons
+(use-package all-the-icons-dired
+  :config
+  (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
+
+
 ;; list recently open files with C-x C-r
 (recentf-mode 1)
-(setq recentf-max-menu-items 25)
+(setq recentf-max-menu-items 10)
 (global-set-key (kbd "C-x C-r") 'recentf-open-files)
 ;; open recent files once emacs starts
 (recentf-open-files)
@@ -157,7 +210,7 @@
 (set-frame-parameter (selected-frame) 'alpha '(85 . 50))
 ;; no welcome buffer when opening emacs
 (setq inhibit-splash-screen t)
-;; open this config file with F2
+;; open this config file with F1
 (global-set-key (kbd "<f1>")
 		'(lambda ()
 		   (interactive)
@@ -264,9 +317,9 @@ occurence of CHAR."
   (cond
    ((and mark-active transient-mark-mode)
     (if (> (point) (mark))
-        (exchange-point-and-mark))
+	(exchange-point-and-mark))
     (let ((column (current-column))
-          (text (delete-and-extract-region (point) (mark))))
+	  (text (delete-and-extract-region (point) (mark))))
       (forward-line arg)
       (move-to-column column t)
       (set-mark (point))
@@ -277,10 +330,10 @@ occurence of CHAR."
     (let ((column (current-column)))
       (beginning-of-line)
       (when (or (> arg 0) (not (bobp)))
-        (forward-line)
-        (when (or (< arg 0) (not (eobp)))
-          (transpose-lines arg))
-        (forward-line -1))
+	(forward-line)
+	(when (or (< arg 0) (not (eobp)))
+	  (transpose-lines arg))
+	(forward-line -1))
       (move-to-column column t)))))
 (defun move-text-down (arg)
   "Move region (transient-mark-mode active) or current line
@@ -295,15 +348,29 @@ occurence of CHAR."
 (global-set-key (kbd "<M-down>") 'move-text-down)
 (global-set-key (kbd "<M-up>") 'move-text-up)
 
-;; set a macro to copy the current word
+;; set a macro to copy the current word at the point
 (fset 'copy-word-at-point
-   [?\C-= ?\M-w])
+      [?\C-= ?\M-w])
 (global-set-key (kbd "C-`") 'copy-word-at-point)
 
+(setq speedbar-show-unknown-files t)
+(setq sr-speedbar-right-side nil)
+(setq speedbar-use-images nil)
 
-;; C-i
-;; C-m
-;; C-;
+
+;; not used temperarily
+;; (use-package yari)
+;; (use-package rinari
+;;   :config
+;;   (global-rinari-mode t))
+
+
+
+
+
+;; unused key bindings
+;; C-i is bound with TAB, so don't change this.
+;; C-m is bound with RET, so don't change this.
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -311,7 +378,7 @@ occurence of CHAR."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (youdao-dictionary web-mode use-package smooth-scrolling smartparens monokai-theme magit lispy js2-mode expand-region counsel company ahungry-theme))))
+    (all-the-icons-buffer font-lock+ all-the-icons-dired all-the-icons neotree zenburn-theme youdao-dictionary yasnippet-snippets web-mode use-package solarized-theme smooth-scrolling smartparens projectile multiple-cursors monokai-theme magit lispy js2-mode github-theme expand-region enh-ruby-mode counsel company ahungry-theme))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
