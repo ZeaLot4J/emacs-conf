@@ -77,7 +77,7 @@
 (use-package smartparens
   :config
   (smartparens-global-mode t)
-  (sp-with-modes '(web-mode)
+  (sp-with-modes '(web-mode nxml-mode)
     (sp-local-pair "<" ">")
     (sp-local-pair "<%" "%>")))
 ;; complete strings
@@ -103,7 +103,8 @@
   (add-hook 'web-mode-hook 'yas-minor-mode)
   (add-hook 'js2-mode-hook 'yas-minor-mode)
   (add-hook 'C-mode-hook 'yas-minor-mode)
-  (add-hook 'C++-mode-hook 'yas-minor-mode))
+  (add-hook 'C++-mode-hook 'yas-minor-mode)
+  (add-hook 'nxml-mode-hook 'yas-minor-mode))
 (use-package yasnippet-snippets)
 
 ;; powerful multiple cursor operations instead of iedit
@@ -353,9 +354,10 @@ occurence of CHAR."
       [?\C-= ?\M-w])
 (global-set-key (kbd "C-`") 'copy-word-at-point)
 
-(setq speedbar-show-unknown-files t)
-(setq sr-speedbar-right-side nil)
-(setq speedbar-use-images nil)
+(fset 'newline-at-any-point
+   [?\C-e return])
+
+(global-set-key (kbd "<C-return>") 'newline-at-any-point)
 
 
 ;; not used temperarily
@@ -371,17 +373,3 @@ occurence of CHAR."
 ;; unused key bindings
 ;; C-i is bound with TAB, so don't change this.
 ;; C-m is bound with RET, so don't change this.
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (all-the-icons-buffer font-lock+ all-the-icons-dired all-the-icons neotree zenburn-theme youdao-dictionary yasnippet-snippets web-mode use-package solarized-theme smooth-scrolling smartparens projectile multiple-cursors monokai-theme magit lispy js2-mode github-theme expand-region enh-ruby-mode counsel company ahungry-theme))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
