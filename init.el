@@ -140,7 +140,13 @@
 (use-package all-the-icons-dired
   :config
   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
-
+;; clojure mode for .clj source files
+(use-package clojure-mode
+  :config
+  (add-to-list 'auto-mode-alist
+	       '("\\.clj" . clojure-mode)))
+;; Clojure Interactive Development Environment that Rocks
+(use-package cider)
 
 ;; list recently open files with C-x C-r
 (recentf-mode 1)
@@ -355,7 +361,7 @@ occurence of CHAR."
 (global-set-key (kbd "C-`") 'copy-word-at-point)
 
 (fset 'newline-at-any-point
-   [?\C-e return])
+      [?\C-e return])
 
 (global-set-key (kbd "<C-return>") 'newline-at-any-point)
 
@@ -373,3 +379,17 @@ occurence of CHAR."
 ;; unused key bindings
 ;; C-i is bound with TAB, so don't change this.
 ;; C-m is bound with RET, so don't change this.
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (cider clojure-mode zenburn-theme youdao-dictionary yasnippet-snippets web-mode use-package solarized-theme smooth-scrolling smartparens ruby-compilation projectile neotree multiple-cursors monokai-theme magit lispy jump js2-mode github-theme expand-region enh-ruby-mode counsel company all-the-icons-dired ahungry-theme))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

@@ -12,3 +12,5 @@ network-security.data
 *.desktop*
 semanticdb/
 snippets/
+projectile*
+.mc-lists.el
