@@ -4,7 +4,7 @@
 
 ;; emacs package sources
 (package-initialize)
-(setq package-archives			;
+(setq package-archives	       
       '(("melpa-stable" . "http://stable.melpa.org/packages/")
 	("gnu" . "http://elpa.gnu.org/packages/")
 	("gnu-cn" . "http://elpa.emacs-china.org/gnu/")
@@ -14,12 +14,16 @@
 ;; ensure packages that are not installed yet will be installed automatically
 (setq use-package-always-ensure t)
 
-;; ahungry theme
 (use-package ahungry-theme)
 
 (if (display-graphic-p)
-    (load-theme 'ahungry t)
-  (load-theme 'monokai t))
+    (load-theme 'ahungry t) 		;t means no load theme confirm
+  (load-theme 'tsdh-dark t))
+
+
+
+;; turn off cursor's blink
+(blink-cursor-mode -1)
 
 ;; youdao dictionary
 (use-package youdao-dictionary
@@ -193,8 +197,11 @@
 	regexp-history)
   (call-interactively 'occur))
 (global-set-key (kbd "M-s o") 'occur-dwim)
-;; turn off cursor's blink
-(blink-cursor-mode -1)
+
+
+
+
+
 ;; save desktop's layout when exiting emacs
 ;; (desktop-save-mode t)
 
@@ -362,8 +369,9 @@ occurence of CHAR."
 
 (fset 'newline-at-any-point
       [?\C-e return])
+(global-set-key (kbd "C-o") 'newline-at-any-point)
 
-(global-set-key (kbd "<C-return>") 'newline-at-any-point)
+
 
 
 ;; not used temperarily
@@ -379,17 +387,3 @@ occurence of CHAR."
 ;; unused key bindings
 ;; C-i is bound with TAB, so don't change this.
 ;; C-m is bound with RET, so don't change this.
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (cider clojure-mode zenburn-theme youdao-dictionary yasnippet-snippets web-mode use-package solarized-theme smooth-scrolling smartparens ruby-compilation projectile neotree multiple-cursors monokai-theme magit lispy jump js2-mode github-theme expand-region enh-ruby-mode counsel company all-the-icons-dired ahungry-theme))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
