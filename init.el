@@ -152,6 +152,10 @@
 ;; Clojure Interactive Development Environment that Rocks
 (use-package cider)
 
+;; export html with colorful code block
+(use-package htmlize)
+
+
 ;; list recently open files with C-x C-r
 (recentf-mode 1)
 (setq recentf-max-menu-items 10)
@@ -387,3 +391,17 @@ occurence of CHAR."
 ;; unused key bindings
 ;; C-i is bound with TAB, so don't change this.
 ;; C-m is bound with RET, so don't change this.
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (htmlize zenburn-theme youdao-dictionary yasnippet-snippets web-mode use-package solarized-theme smooth-scrolling smartparens ruby-compilation projectile neotree multiple-cursors monokai-theme magit lispy jump js2-mode github-theme expand-region enh-ruby-mode counsel company cider all-the-icons-dired ahungry-theme))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
