@@ -95,10 +95,7 @@
 (use-package magit
   :bind ("C-x g" . magit-status))
 
-;; convenient lisp mode
-(use-package lispy
-  :config
-  (add-hook 'emacs-lisp-mode-hook 'lispy-mode))
+
 
 ;; code templates
 (use-package yasnippet
@@ -111,7 +108,7 @@
   (add-hook 'nxml-mode-hook 'yas-minor-mode))
 (use-package yasnippet-snippets)
 
-;; powerful multiple cursor operations instead of iedit
+;; powerful multiple cursors operations instead of iedit
 (use-package multiple-cursors
   :bind (("C->"           . mc/mark-next-like-this)
 	 ("C-<"           . mc/mark-previous-like-this)
@@ -154,7 +151,6 @@
 
 ;; export html with colorful code block
 (use-package htmlize)
-
 
 ;; list recently open files with C-x C-r
 (recentf-mode 1)
@@ -244,7 +240,7 @@
 (global-set-key "\C-h\ \C-f" 'find-function)
 (global-set-key "\C-h\ \C-v" 'find-variable)
 (global-set-key "\C-h\ \C-k" 'find-function-on-key)
-;; indent the while buffer
+;; indent the whole buffer
 (defun indent-buffer ()
   (interactive)
   (indent-region (point-min) (point-max)))
@@ -320,17 +316,28 @@ occurence of CHAR."
 		'(lambda ()
 		   (interactive)
 		   (jump-to-register ?\`)))
+;; save the current window layout
+(global-set-key (kbd "<f5>")
+		'(lambda ()
+		   (interactive)
+		   (window-configuration-to-register ?\~)))
+;; restore the window layout saved before
+(global-set-key (kbd "<f6>")
+		'(lambda ()
+		   (interactive)
+		   (jump-to-register ?\~)))
+
 ;; config emails, need .authinfo
 (setq user-full-name "Lancelot Zealot")
 (setq user-mail-address "18879538430@163.com")
 (setq smtpmail-smtp-server "smtp.163.com")
 (setq smtpmail-smtp-service 25)
 (setq send-mail-function ''smtpmail-send-it)
-;; eww's default search engine
+;; set the default search engine of emacs's inner browser EWW
 (setq eww-search-prefix "https://www.bing.com/search?q=")
 
 
-;; move up and down a line or a region conveniently with  M-up and  M-down
+;; move up and down a line or a region conveniently with  M-up and  M-down just like Eclipse IDE
 (defun move-text-internal (arg)
   (cond
    ((and mark-active transient-mark-mode)
@@ -396,9 +403,11 @@ occurence of CHAR."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(jdee-complete-function (quote jdee-complete-minibuf))
+ '(jdee-server-dir "~/.emacs.d/")
  '(package-selected-packages
    (quote
-    (htmlize zenburn-theme youdao-dictionary yasnippet-snippets web-mode use-package solarized-theme smooth-scrolling smartparens ruby-compilation projectile neotree multiple-cursors monokai-theme magit lispy jump js2-mode github-theme expand-region enh-ruby-mode counsel company cider all-the-icons-dired ahungry-theme))))
+    (zoutline zenburn-theme youdao-dictionary yasnippet-snippets web-mode use-package solarized-theme smooth-scrolling smartparens ruby-compilation projectile neotree multiple-cursors monokai-theme magit jump js2-mode iedit hydra htmlize github-theme expand-region enh-ruby-mode counsel company cider all-the-icons-dired ahungry-theme ace-window))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
