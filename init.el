@@ -146,9 +146,11 @@
 ;; export html with colorful code block
 (use-package htmlize)
 
+;; jump to specified char conveniently
 (use-package avy
   :bind ("C-:" . avy-goto-char))
 
+;; split windows with golden ratio
 (use-package golden-ratio
   :config
   (golden-ratio-mode 1))
@@ -408,17 +410,3 @@
 ;; C-m is bound with RET, so don't change this.
 
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (golden-ratio zoutline zenburn-theme youdao-dictionary yasnippet-snippets web-mode use-package solarized-theme smooth-scrolling smartparens s ruby-compilation projectile neotree multiple-cursors monokai-theme magit jump js2-mode iedit hydra htmlize github-theme flycheck expand-region counsel company cider all-the-icons-dired ahungry-theme ace-window))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
