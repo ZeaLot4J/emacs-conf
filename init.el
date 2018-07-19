@@ -100,7 +100,7 @@
 ;; code templates
 (use-package yasnippet
   :config
-  (add-hook 'enh-ruby-mode-hook 'yas-minor-mode)
+  (add-hook 'ruby-mode 'yas-minor-mode)
   (add-hook 'web-mode-hook 'yas-minor-mode)
   (add-hook 'js2-mode-hook 'yas-minor-mode)
   (add-hook 'C-mode-hook 'yas-minor-mode)
@@ -118,22 +118,16 @@
 	 ("C-S-<mouse-1>" . mc/add-cursor-on-click)
 	 ("C-;"           . mc/mark-all-symbols-like-this)))
 
-;; config for ruby dev
-(use-package enh-ruby-mode
-  :config
-  (add-to-list 'auto-mode-alist
-	       '("\\(?:\\.rb\\|ru\\|rake\\|thor\\|jbuilder\\|gemspec\\|podspec\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'" . enh-ruby-mode)))
-
 ;; project manager
 (use-package projectile
   :config
   (setq projectile-completion-system 'default))
 
 ;; directory tree
-(use-package neotree
-  :bind ("<f9>" . neotree-toggle)
-  :config
-  (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
+;; (use-package neotree
+;;   :bind ("<f9>" . neotree-toggle)
+;;   :config
+;;   (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
 
 ;; tree icons
 (use-package all-the-icons)
@@ -151,6 +145,11 @@
 
 ;; export html with colorful code block
 (use-package htmlize)
+
+(use-package ace-jump-mode
+  :bind ("<f3>" . ace-jump-mode))
+
+
 
 ;; list recently open files with C-x C-r
 (recentf-mode 1)
@@ -214,12 +213,6 @@
 (setq dired-recursive-deletes 'always)
 
 
-
-
-
-
-
-
 ;; transparent background
 (set-frame-parameter (selected-frame) 'alpha '(85 . 50))
 ;; no welcome buffer when opening emacs
@@ -271,18 +264,20 @@
       ring-bell-function 'ignore)
 ;; emacs's inner copying and cutting will be effective with OS's clipboard
 (setq select-enable-clipboard t)
+
+;; Deprecated
 ;; search a char until it is found, just like Vim's command f
-(defun wy-go-to-char (n char)
-  "Move forward to Nth occurence of CHAR.
-Typing `wy-go-to-char-key' again will move forwad to the next Nth
-occurence of CHAR."
-  (interactive "p\ncGo to char: ")
-  (search-forward (string char) nil nil n)
-  (while (char-equal (read-char)
-		     char)
-    (search-forward (string char) nil nil n))
-  (setq unread-command-events (list last-input-event)))
-(define-key global-map (kbd "<f3>") 'wy-go-to-char)
+;; (defun wy-go-to-char (n char)
+;;   "Move forward to Nth occurence of CHAR.
+;; Typing `wy-go-to-char-key' again will move forwad to the next Nth
+;; occurence of CHAR."
+;;   (interactive "p\ncGo to char: ")
+;;   (search-forward (string char) nil nil n)
+;;   (while (char-equal (read-char)
+;; 		     char)
+;;     (search-forward (string char) nil nil n))
+;;   (setq unread-command-events (list last-input-event)))
+
 ;; quickly jump to specified line
 (global-set-key (kbd "<f2>") 'goto-line)
 ;; start defining a macro
@@ -320,12 +315,14 @@ occurence of CHAR."
 (global-set-key (kbd "<f5>")
 		'(lambda ()
 		   (interactive)
-		   (window-configuration-to-register ?\~)))
+		   (window-configuration-to-register ?\~)
+		   (message "Saving window layout...done")))
 ;; restore the window layout saved before
 (global-set-key (kbd "<f6>")
 		'(lambda ()
 		   (interactive)
-		   (jump-to-register ?\~)))
+		   (jump-to-register ?\~)
+		   (message "Restoring window layout...done")))
 
 ;; config emails, need .authinfo
 (setq user-full-name "Lancelot Zealot")
@@ -384,6 +381,15 @@ occurence of CHAR."
 
 
 
+;; enlarge and shrink current window
+(global-set-key (kbd "C-{") 'shrink-window-horizontally)
+(global-set-key (kbd "C-}") 'enlarge-window-horizontally)
+(global-set-key (kbd "C-^") 'enlarge-window)
+
+
+
+
+
 
 ;; not used temperarily
 ;; (use-package yari)
@@ -398,3 +404,19 @@ occurence of CHAR."
 ;; unused key bindings
 ;; C-i is bound with TAB, so don't change this.
 ;; C-m is bound with RET, so don't change this.
+
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (ace-jump-mode zoutline zenburn-theme youdao-dictionary yasnippet-snippets web-mode use-package solarized-theme smooth-scrolling smartparens s ruby-compilation projectile neotree multiple-cursors monokai-theme magit jump js2-mode iedit hydra htmlize github-theme flycheck expand-region counsel company cider all-the-icons-dired ahungry-theme ace-window))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
