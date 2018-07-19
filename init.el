@@ -146,10 +146,12 @@
 ;; export html with colorful code block
 (use-package htmlize)
 
-(use-package ace-jump-mode
-  :bind ("<f3>" . ace-jump-mode))
+(use-package avy
+  :bind ("C-:" . avy-goto-char))
 
-
+(use-package golden-ratio
+  :config
+  (golden-ratio-mode 1))
 
 ;; list recently open files with C-x C-r
 (recentf-mode 1)
@@ -413,7 +415,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (ace-jump-mode zoutline zenburn-theme youdao-dictionary yasnippet-snippets web-mode use-package solarized-theme smooth-scrolling smartparens s ruby-compilation projectile neotree multiple-cursors monokai-theme magit jump js2-mode iedit hydra htmlize github-theme flycheck expand-region counsel company cider all-the-icons-dired ahungry-theme ace-window))))
+    (golden-ratio zoutline zenburn-theme youdao-dictionary yasnippet-snippets web-mode use-package solarized-theme smooth-scrolling smartparens s ruby-compilation projectile neotree multiple-cursors monokai-theme magit jump js2-mode iedit hydra htmlize github-theme flycheck expand-region counsel company cider all-the-icons-dired ahungry-theme ace-window))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
