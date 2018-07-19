@@ -160,9 +160,9 @@
 	'(("1.8.0_161" . "C:\\Program Files\\Java\\jdk1.8.0_161\\bin")))
    (setq jdee-compiler (quote ("javac server"))))
 
+;; jump to any char's position quickly and conveniently
 (use-package ace-jump-mode
   :bind ("<f3>" . ace-jump-mode))
-
 
 
 ;; list recently open files with C-x C-r
@@ -212,9 +212,6 @@
 (global-set-key (kbd "M-s o") 'occur-dwim)
 
 
-
-
-
 ;; save desktop's layout when exiting emacs
 ;; (desktop-save-mode t)
 
@@ -225,10 +222,6 @@
 ;; always execute recursively when deleting and copying directories in dired mode
 (setq dired-recursive-copies 'always)
 (setq dired-recursive-deletes 'always)
-
-
-
-
 
 
 
@@ -410,6 +403,7 @@
 ;;   (global-rinari-mode t))
 
 
+;; enlarge and shrink current window
 (global-set-key (kbd "C-{") 'shrink-window-horizontally)
 (global-set-key (kbd "C-}") 'enlarge-window-horizontally)
 (global-set-key (kbd "C-^") 'enlarge-window)
