@@ -51,6 +51,12 @@
   :config
   (ivy-mode 1)
   (setq ivy-use-virtual-buffers t))
+
+(use-package ag
+  :config
+  (setq ag-highlight-search t))
+
+
 ;; smooth scrolling
 (use-package smooth-scrolling
   :config
@@ -100,7 +106,7 @@
 ;; code templates
 (use-package yasnippet
   :config
-  (add-hook 'ruby-mode 'yas-minor-mode)
+  (add-hook 'ruby-mode-hook 'yas-minor-mode)
   (add-hook 'web-mode-hook 'yas-minor-mode)
   (add-hook 'js2-mode-hook 'yas-minor-mode)
   (add-hook 'C-mode-hook 'yas-minor-mode)
@@ -148,7 +154,12 @@
 
 ;; jump to specified char conveniently
 (use-package avy
-  :bind ("C-:" . avy-goto-char))
+  :bind ("<f3>" . avy-goto-char))
+
+(use-package ace-window
+  :bind ("M-o" . ace-window)
+  :config
+  (ace-window-display-mode t))
 
 ;; split windows with golden ratio
 (use-package golden-ratio
@@ -391,7 +402,86 @@
 (global-set-key (kbd "C-^") 'enlarge-window)
 
 
+;; repeat most recently executed command.
+(global-set-key (kbd "<f9>") 'repeat)
 
+;;(load "D:\\emacs\\.emacs.d\\lisp\\my-abbrev")
+(clear-abbrev-table global-abbrev-table)
+(define-abbrev-table 'global-abbrev-table
+  '(
+    ;; my own frequently used abbrevs
+    ("thx" "thanks")
+
+    ;; net abbrev
+    ("afaik" "as far as i know" )
+    ("atm" "at the moment" )
+    ("dfb" "difference between" )
+    ("ty" "thank you" )
+    ("ui" "user interface" )
+    ("uns" "understand" )
+    ("ur" "you are" )
+    ("btw" "by the way" )
+    ("cnt" "can't" )
+    ("ddnt" "didn't" )
+    ("dnt" "don't" )
+    ;; english word abbrev
+    ("ann" "announcement" )
+    ("arg" "argument" )
+    ("autom" "automatic" )
+    ("bc" "because" )
+    ("bg" "background" )
+    ("bt" "between" )
+    ("math" "mathematics" )
+    ;; computing
+    ("ahk" "AutoHotkey" )
+    ("cfg" "context-free grammar" )
+    ("cj" "Clojure" )
+    ("cs" "computer science" )
+    ;; tech company
+    ("gc" "Google Chrome" )
+    ("gm" "Google Map" )
+    ("macos" "Mac OS" )
+    ("msw" "Microsoft Windows" )
+    ;; programing
+    ("ev" "environment variable" )
+    ("ipa" "IP address" )
+    ("jvm" "Java Virtual Machine" )
+    ("rsi" "Repetitive Strain Injury" )
+    ("subdir" "sub-directory" )
+    ("wd" "web development" )
+    ("db" "database" )
+    ("gui3" "graphical user interface" )
+    ("oop3" "object oriented programing" )
+    ("os3" "operating system" )
+    ;; programing
+    ("eq" "==" )
+    ("r" "return" )
+    ("utf8" "-*- coding: utf-8 -*-" )
+    ;; regex
+    ("xaz" "\\([A-Za-z0-9]+\\)" )
+    ;; unicode
+    ("md" "—" )
+    ("hr" "--------------------------------------------------" )
+    ("bu" "•" )
+    ;; url
+    ("urlemacs" "http://ergoemacs.org/" )))
+(setq save-abbrevs nil)
+
+;; define abbrev for specific major mode
+;; the first part of the name should be the value of the variable major-mode of that mode
+;; e.g. for go-mode, name should be go-mode-abbrev-table
+(define-abbrev-table 'go-mode-abbrev-table
+  '(
+    ("for" "for i := 0; i < 4; i++ { i }")
+    ("if" "if x < 0 { 3 }")
+    ("r" "return")
+    ("ps" "+")
+    ("eq" "==")
+    ("pt" "fmt.Println(3)")
+    ("fu" "func(x int) int { return 1 }")
+    ("v" "var = 3")))
+;;(set-default 'abbrev-mode t)
+(global-set-key (kbd "<tab>") 'expand-abbrev)
 
 
 
