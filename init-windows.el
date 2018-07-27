@@ -169,19 +169,17 @@
 ;;   (setq jdee-compiler (quote ("javac server"))))
 
 ;; jump to any char's position quickly and conveniently
-;; (use-package ace-jump-mode
-;;   :bind ("<f3>" . ace-jump-mode))
-
 (use-package avy
-  :bind ("C-:" . avy-goto-char))
+  :bind ("<f3>" . avy-goto-char))
 
 (use-package ace-window
-  :bind ("M-o" . ace-window))
+  :bind ("M-o" . ace-window)
+  :config
+  (ace-window-display-mode t))
 
 ;; split windows with golden ratio
 (use-package golden-ratio
-  :config
-  (golden-ratio-mode 1))
+  :bind ("<f12>" . golden-ratio))
 
 ;; list recently open files with C-x C-r
 (recentf-mode 1)
@@ -426,7 +424,8 @@
 (global-set-key (kbd "C-}") 'enlarge-window-horizontally)
 (global-set-key (kbd "C-^") 'enlarge-window)
 
-
+;; repeat most recently executed command.
+(global-set-key (kbd "<f9>") 'repeat)
 
 ;;(load "D:\\emacs\\.emacs.d\\lisp\\my-abbrev")
 (clear-abbrev-table global-abbrev-table)
@@ -512,24 +511,43 @@ func main() {
 (global-set-key (kbd "<tab>") 'expand-abbrev)
 
 
-;; unused key bindings
+
+;; org-mode configurations
+(global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cc" 'org-capture)
+(global-set-key "\C-cb" 'org-switchb)
+
+
+(setq org-directory "D:\\emacs\\.emacs.d\\GTD")
+(setq org-remember-templates '(
+			       ("Task" ?t "** TODO %? %t\n %i\n %a" "~/GTD/inbox.org" "Tasks")
+			       ("Book" ?c "** %? %t\n %i\n %a" "~/GTD/inbox.org" "Book")
+			       ("Calendar" ?c "** %? %t\n %i\n %a" "~/GTD/inbox.org" "Calender")
+			       ("Project" ?p "** %? %t\n %i\n %a" "~/GTD/inbox.org" "Project")))
+(setq org-default-notes-file (concat org-directory "/inbox.org"))
+
+
+
+;; ! triggers a timestamp when states are changed
+;; @ triggers a note when states are changed
+(setq org-todo-keywords
+      '((sequence "TODO(t!)" "PENDING(p!)" "|" "DONE(d!)" "CANCELED(c!)")
+	(sequence "REPORT" "BUG" "KNOWNCAUSE" "|" "FIXED")
+	(type "Fred" "Sara" "Lucy" "|" "DONE")))
+(setq org-todo-keyword-faces
+      '(("PENDING" . "orange")
+	("CANCELED" . "red")))
+;; Switch entry to DONE when all subentries are done, to TODO otherwise.
+(defun org-summary-todo (n-done n-not-done)
+  (let (org-log-done org-log-states)   ; turn off logging
+    (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+(add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+
+
+;; UNUSED key bindings
 ;; C-i is bound with TAB, so don't change this.
 ;; C-m is bound with RET, so don't change this.
 
 
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(minimap-window-location (quote right))
- '(package-selected-packages
-   (quote
-    (ag zoutline youdao-dictionary yasnippet-snippets web-mode use-package smooth-scrolling smartparens projectile neotree multiple-cursors magit js2-mode jdee iedit hydra htmlize golden-ratio expand-region counsel company cider ahungry-theme ace-window ace-jump-mode))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
