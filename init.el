@@ -483,6 +483,41 @@
 (global-set-key (kbd "<tab>") 'expand-abbrev)
 
 
+;; org-mode configurations
+(global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cc" 'org-capture)
+(global-set-key "\C-cb" 'org-switchb)
+
+
+(setq org-directory "./GTD")
+(setq org-remember-templates '(
+			       ("Task" ?t "** TODO %? %t\n %i\n %a" "./GTD/inbox.org" "Tasks")
+			       ("Book" ?c "** %? %t\n %i\n %a" "./GTD/inbox.org" "Book")
+			       ("Calendar" ?c "** %? %t\n %i\n %a" "./GTD/inbox.org" "Calender")
+			       ("Project" ?p "** %? %t\n %i\n %a" "./GTD/inbox.org" "Project")))
+(setq org-default-notes-file (concat org-directory "/inbox.org"))
+ 
+ 
+ 
+;; ! triggers a timestamp when states are changed
+;; @ triggers a note when states are changed
+(setq org-todo-keywords
+      '((sequence "TODO(t!)" "PENDING(p!)" "|" "DONE(d!)" "CANCELED(c!)")
+	(sequence "REPORT" "BUG" "KNOWNCAUSE" "|" "FIXED")
+	(type "Fred" "Sara" "Lucy" "|" "DONE")))
+(setq org-todo-keyword-faces
+      '(("PENDING" . "orange")
+	("CANCELED" . "red")))
+;; Switch entry to DONE when all subentries are done, to TODO otherwise.
+(defun org-summary-todo (n-done n-not-done)
+  (let (org-log-done org-log-states)   ; turn off logging
+    (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+(add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+
+
+
+
 
 ;; not used temperarily
 ;; (use-package yari)
