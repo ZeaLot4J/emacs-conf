@@ -10,6 +10,7 @@
 	lispy-delete
 	lispy-delete-backward
 	lispy-kill
+	lispy-mark-symbol
 	lispy-move-end-of-line
 	lispy-parens
 	lispy-quotes
