@@ -1,0 +1,6 @@
+* Tasks
+** TODO learn French, complete the 3rd lesson on Bilibili
+   [2018-07-28 六]
+** TODO design emacs GTD with org mode
+   [2018-07-28 六]
+   [[file:~/.emacs.d/GTD/inbox.org::*learn%20French,%20complete%20the%203rd%20lesson%20on%20Bilibili][learn French, complete the 3rd lesson on Bilibili]]
