@@ -5,6 +5,7 @@
       '(
 	counsel-M-x
 	dabbrev-expand
+	keyboard-escape-quit
 	lispy-braces
 	lispy-brackets
 	lispy-delete

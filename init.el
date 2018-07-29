@@ -10,6 +10,7 @@
 	("gnu-cn" . "http://elpa.emacs-china.org/gnu/")
 	("melpa-cn" . "http://elpa.emacs-china.org/melpa/")))
 
+(setq emacs-home "~/.emacs.d")
 
 ;; ensure packages that are not installed yet will be installed automatically
 (setq use-package-always-ensure t)
@@ -235,7 +236,7 @@
 (global-set-key (kbd "<f1>")
 		'(lambda ()
 		   (interactive)
-		   (find-file "~/.emacs.d/init.el")))
+		   (find-file (concat emacs-home "/init.el"))))
 ;; disable backing up files
 (setq make-backup-files nil)
 ;; disable auto-save
@@ -480,40 +481,7 @@
     ("fu" "func(x int) int { return 1 }")
     ("v" "var = 3")))
 ;;(set-default 'abbrev-mode t)
-(global-set-key (kbd "<tab>") 'expand-abbrev)
-
-
-;; org-mode configurations
-(global-set-key "\C-cl" 'org-store-link)
-(global-set-key "\C-ca" 'org-agenda)
-(global-set-key "\C-cc" 'org-capture)
-(global-set-key "\C-cb" 'org-switchb)
-
-
-(setq org-directory "./GTD")
-(setq org-remember-templates '(
-			       ("Task" ?t "** TODO %? %t\n %i\n %a" "./GTD/inbox.org" "Tasks")
-			       ("Book" ?c "** %? %t\n %i\n %a" "./GTD/inbox.org" "Book")
-			       ("Calendar" ?c "** %? %t\n %i\n %a" "./GTD/inbox.org" "Calender")
-			       ("Project" ?p "** %? %t\n %i\n %a" "./GTD/inbox.org" "Project")))
-(setq org-default-notes-file (concat org-directory "/inbox.org"))
- 
- 
- 
-;; ! triggers a timestamp when states are changed
-;; @ triggers a note when states are changed
-(setq org-todo-keywords
-      '((sequence "TODO(t!)" "PENDING(p!)" "|" "DONE(d!)" "CANCELED(c!)")
-	(sequence "REPORT" "BUG" "KNOWNCAUSE" "|" "FIXED")
-	(type "Fred" "Sara" "Lucy" "|" "DONE")))
-(setq org-todo-keyword-faces
-      '(("PENDING" . "orange")
-	("CANCELED" . "red")))
-;; Switch entry to DONE when all subentries are done, to TODO otherwise.
-(defun org-summary-todo (n-done n-not-done)
-  (let (org-log-done org-log-states)   ; turn off logging
-    (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
-(add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+;;(global-set-key (kbd "<tab>") 'expand-abbrev)
 
 
 
@@ -528,9 +496,56 @@
 
 
 
-
 ;; unused key bindings
 ;; C-i is bound with TAB, so don't change this.
 ;; C-m is bound with RET, so don't change this.
 
 
+;; (custom-set-variables
+;;  '(org-capture-templates
+;;    (quote
+;;     (("t" "task" entry
+;;       (file+headline org-default-notes-file "Tasks")
+;;       "* TODO %?\n %i\n %a" :empty-lines-before 1)))))
+
+;; ;; org-mode configurations
+;; (global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cc" 'org-capture)
+;; (global-set-key "\C-cb" 'org-switchb)
+
+(setq gtd-directory (concat emacs-home "/GTD"))
+
+(setq org-default-notes-file (concat gtd-directory "/inbox.org"))
+
+;; ;; ! triggers a timestamp when states are changed
+;; ;; @ triggers a note when states are changed
+(setq org-todo-keywords
+      '((sequence "TODO(t!)" "PENDING(p!)" "|" "DONE(d!)" "CANCELED(c!/@)")))
+(setq org-todo-keyword-faces
+      '(("PENDING" . "orange")
+ 	("CANCELED" . "red")))
+;; Switch entry to DONE when all subentries are done, to TODO otherwise.
+(defun org-summary-todo (n-done n-not-done)
+  (let (org-log-done org-log-states)   ; turn off logging
+    (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+(add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+
+(setq org-agenda-custom-commands
+      '(("o" "At the office" tags-todo "@office")
+	("h" "At home" tags-todo "@home")
+	("w" "on the way" tags-todo "@way")))
+
+(setq org-agenda-files '("~/.emacs.d/GTD/inbox.org"
+                         "~/.emacs.d/GTD/gtd.org"
+                         "~/.emacs.d/GTD/tickler.org"))
+
+(setq org-capture-templates '(("t" "Todo [inbox]" entry
+                               (file+headline "~/.emacs.d/GTD/inbox.org" "Tasks")
+                               "* TODO %i%? %^g")
+                              ("T" "Tickler" entry
+                               (file+headline "~/.emacs.d/GTD/tickler.org" "Tickler")
+                               "* %i%? \n %U %^g")))
+(setq org-refile-targets '(("~/.emacs.d/GTD/gtd.org" :maxlevel . 3)
+                           ("~/.emacs.d/GTD/someday.org" :level . 1)
+                           ("~/.emacs.d/GTD/tickler.org" :maxlevel . 2)))
