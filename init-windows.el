@@ -10,6 +10,8 @@
 	("gnu-cn" . "http://elpa.emacs-china.org/gnu/")
 	("melpa-cn" . "http://elpa.emacs-china.org/melpa/")))
 
+;; emacs config home directory
+(setq emacs-home "D:\\emacs\\.emacs.d")
 
 ;; ensure packages that are not installed yet will be installed automatically
 (setq use-package-always-ensure t)
@@ -45,7 +47,9 @@
 (use-package swiper
   :bind ("C-s" . swiper))
 
-(use-package ag)
+(use-package ag
+  :config
+  (setq ag-highlight-search t))
 
 ;; dependency of counsel and swiper
 ;; what's more, it makes switch-to-buffer display a list
@@ -90,7 +94,7 @@
     (sp-local-pair "<%" "%>")))
 ;; complete strings
 (use-package company
-  :bind ("M-/" . company-complete)
+  ;;  :bind ("M-/" . company-complete)
   :config
   (global-company-mode t))
 
@@ -98,8 +102,6 @@
 ;; emacs git
 (use-package magit
   :bind ("C-x g" . magit-status))
-
-
 
 ;; code templates
 (use-package yasnippet
@@ -181,6 +183,32 @@
 (use-package golden-ratio
   :bind ("<f12>" . golden-ratio))
 
+
+(use-package browse-kill-ring
+  :bind ("M-y" . browse-kill-ring)
+  :config
+  (setq browse-kill-ring-display-duplicates nil)
+  (setq browse-kill-ring-display-style (quote one-line))
+  (setq browse-kill-ring-highlight-current-entry t)
+  (setq browse-kill-ring-highlight-inserted-item (quote solid))
+  (setq browse-kill-ring-recenter nil)
+  (setq browse-kill-ring-resize-window nil)
+  (setq browse-kill-ring-show-preview nil))
+
+(setq hippie-expand-try-function-list '(try-expand-debbrev
+                                        try-expand-debbrev-all-buffers
+                                        try-expand-debbrev-from-kill
+                                        try-complete-file-name-partially
+                                        try-complete-file-name
+                                        try-expand-all-abbrevs
+                                        try-expand-list
+                                        try-expand-line
+                                        try-complete-lisp-symbol-partially
+                                        try-complete-lisp-symbol))
+(global-set-key (kbd "M-/") 'hippie-expand)
+
+
+
 ;; list recently open files with C-x C-r
 (recentf-mode 1)
 (setq recentf-max-menu-items 10)
@@ -250,7 +278,7 @@
 (global-set-key (kbd "<f1>")
 		'(lambda ()
 		   (interactive)
-		   (find-file "~/.emacs.d/init.el")))
+		   (find-file (concat emacs-home "\\init.el"))))
 ;; disable backing up files
 (setq make-backup-files nil)
 ;; disable auto-save
@@ -508,15 +536,82 @@ func main() {
     ("v" "var = 3")))
 
 ;;(set-default 'abbrev-mode t)
-(global-set-key (kbd "<tab>") 'expand-abbrev)
+;; (global-set-key (kbd "<tab>") 'expand-abbrev)
 
-
-
-;; org-mode configurations
-(global-set-key "\C-cl" 'org-store-link)
+;; ;; org-mode configurations
+;; (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cc" 'org-capture)
-(global-set-key "\C-cb" 'org-switchb)
+;; (global-set-key "\C-cb" 'org-switchb)
+
+(setq gtd-directory (concat emacs-home "\\GTD"))
+
+(setq org-default-notes-file (concat gtd-directory "\\inbox.org"))
+
+;; ;; ! triggers a timestamp when states are changed
+;; ;; @ triggers a note when states are changed
+(setq org-todo-keywords
+      '((sequence "TODO(t!)" "PENDING(p!)" "|" "DONE(d!)" "CANCELED(c!/@)")))
+(setq org-todo-keyword-faces
+      '(("PENDING" . "orange")
+ 	("CANCELED" . "red")))
+;; Switch entry to DONE when all subentries are done, to TODO otherwise.
+(defun org-summary-todo (n-done n-not-done)
+  (let (org-log-done org-log-states)   ; turn off logging
+    (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+(add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+
+(setq org-agenda-custom-commands
+      '(("o" "At the office" tags-todo "@office")
+	("h" "At home" tags-todo "@home")
+	("w" "On the way" tags-todo "@way")
+	("n" "Take the note" tags-todo "@note")))
+
+(setq inbox-file (concat gtd-directory "\\inbox.org"))
+(setq notes-file (concat gtd-directory "\\notes.org"))
+(setq tasks-file (concat gtd-directory "\\tasks.org"))
+(setq someday-file (concat gtd-directory "\\someday.org"))
+(setq finished-file (concat gtd-directory "\\finished.org"))
+(setq canceled-file (concat gtd-directory "\\canceled.org"))
+
+(setq org-agenda-files '(inbox-file
+			 notes-file
+			 tasks-file
+			 someday-file
+			 finished-file
+			 canceled-file))
+
+
+
+;; TODO
+(setq org-capture-templates '(("t" "Todo [inbox]" entry
+                               (file+headline "~/.emacs.d/GTD/inbox.org" "Tasks")
+                               "* TODO %i%? %^g")
+                              ("T" "Tickler" entry
+                               (file+headline "~/.emacs.d/GTD/tickler.org" "Tickler")
+                               "* %i%? \n %U %^g")))
+(setq org-refile-targets '(("~/.emacs.d/GTD/gtd.org" :maxlevel . 3)
+                           ("~/.emacs.d/GTD/someday.org" :level . 1)
+                           ("~/.emacs.d/GTD/tickler.org" :maxlevel . 2)))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 (setq org-directory "D:\\emacs\\.emacs.d\\GTD")
