@@ -599,7 +599,7 @@
                                "* TODO %i%? %T %^g" :empty-lines-before 1)
                               ("n" "Notes" entry
                                (file+headline notes-file "Notes")
-                               "* %i%? \n %T %^g" :empty-lines-before 1 :prepend 1)))
+                               "* %i%? \n %T" :empty-lines-before 1 :prepend 1)))
 (setq org-refile-targets '((inbox-file :maxlevel . 2)
                            (tasks-file :maxlevel . 2)
                            (someday-file :maxlevel . 2)
