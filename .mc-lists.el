@@ -91,6 +91,7 @@
 
 (setq mc/cmds-to-run-once
       '(
+	eval-last-sexp
 	iedit-switch-to-mc-mode
 	lispy-cursor-down
 	))

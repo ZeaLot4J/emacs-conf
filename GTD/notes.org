@@ -1,0 +1,16 @@
+* Notes
+** 懒汉singleton应该在private contructor中添加判断，在创建第二个实例时，抛出异常，防止反射破坏单例 
+#+BEGIN_SRC java
+public class Singleton {
+  private final static INSTANCE = new Singleton();
+  private Singleton() {
+    if (INSTANCE != null) {
+      throw RuntimeException("There can be only one instance of " + Singleton.class);
+    }
+  }
+  public Singleton getInstance() {
+    return INSTANCE;
+  }
+}
+#+END_SRC
+  [2018-08-05 日 20:34]

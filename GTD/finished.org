@@ -1,0 +1,6 @@
+#+STARTUP: showall
+#+STARTUP: hidestars
+#+PROPERTY: CLOCK_INTO_DRAWER t
+#+TAGS: { @office(o) @home(h) @way(w) }
+* Finished
+#+CATEGORY: finished

@@ -10,6 +10,7 @@
 	("gnu-cn" . "http://elpa.emacs-china.org/gnu/")
 	("melpa-cn" . "http://elpa.emacs-china.org/melpa/")))
 
+;; emacs config home directory
 (setq emacs-home "~/.emacs.d")
 
 ;; ensure packages that are not installed yet will be installed automatically
@@ -166,6 +167,54 @@
 (use-package golden-ratio
   :bind ("<f12>" . golden-ratio))
 
+(use-package browse-kill-ring
+  :bind ("M-y" . browse-kill-ring)
+  :config
+  (setq browse-kill-ring-display-duplicates nil)
+  (setq browse-kill-ring-display-style (quote one-line))
+  (setq browse-kill-ring-highlight-current-entry t)
+  (setq browse-kill-ring-highlight-inserted-item (quote solid))
+  (setq browse-kill-ring-recenter nil)
+  (setq browse-kill-ring-resize-window nil)
+  (setq browse-kill-ring-show-preview nil))
+
+(use-package meghanada
+  :config
+  (add-hook 'java-mode-hook
+            (lambda ()
+              ;; meghanada-mode on
+              (meghanada-mode t)
+              (flycheck-mode +1)
+              (setq c-basic-offset 4)
+              ;; use code format
+              (add-hook 'before-save-hook 'meghanada-code-beautify-before-save))
+	    (cond
+	     ((eq system-type 'windows-nt)
+	      (setq meghanada-java-path (expand-file-name "bin/java.exe" (getenv "JAVA_HOME")))
+	      (setq meghanada-maven-path "mvn.cmd"))
+	     (t
+	      (setq meghanada-java-path "java")
+	      (setq meghanada-maven-path "mvn")))))
+
+
+
+(setq hippie-expand-try-function-list '(try-expand-debbrev
+                                        try-expand-debbrev-all-buffers
+                                        try-expand-debbrev-from-kill
+                                        try-complete-file-name-partially
+                                        try-complete-file-name
+                                        try-expand-all-abbrevs
+                                        try-expand-list
+                                        try-expand-line
+                                        try-complete-lisp-symbol-partially
+                                        try-complete-lisp-symbol))
+(global-set-key (kbd "M-/") 'hippie-expand)
+
+
+
+
+
+
 ;; list recently open files with C-x C-r
 (recentf-mode 1)
 (setq recentf-max-menu-items 10)
@@ -236,7 +285,7 @@
 (global-set-key (kbd "<f1>")
 		'(lambda ()
 		   (interactive)
-		   (find-file (concat emacs-home "/init.el"))))
+		   (find-file (expand-file-name "init.el" emacs-home))))
 ;; disable backing up files
 (setq make-backup-files nil)
 ;; disable auto-save
@@ -469,7 +518,7 @@
 
 ;; define abbrev for specific major mode
 ;; the first part of the name should be the value of the variable major-mode of that mode
-;; e.g. for go-mode, name should be go-mode-abbrev-table
+;; e.g. for go-mode, name should be go-mconcat
 (define-abbrev-table 'go-mode-abbrev-table
   '(
     ("for" "for i := 0; i < 4; i++ { i }")
@@ -501,25 +550,19 @@
 ;; C-m is bound with RET, so don't change this.
 
 
-;; (custom-set-variables
-;;  '(org-capture-templates
-;;    (quote
-;;     (("t" "task" entry
-;;       (file+headline org-default-notes-file "Tasks")
-;;       "* TODO %?\n %i\n %a" :empty-lines-before 1)))))
 
-;; ;; org-mode configurations
-;; (global-set-key "\C-cl" 'org-store-link)
+;; org-mode configurations
+(global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cc" 'org-capture)
-;; (global-set-key "\C-cb" 'org-switchb)
+(global-set-key "\C-cb" 'org-switchb)
 
 (setq gtd-directory (concat emacs-home "/GTD"))
 
-(setq org-default-notes-file (concat gtd-directory "/inbox.org"))
+(setq org-default-notes-file (expand-file-name "inbox.org" gtd-directory))
 
-;; ;; ! triggers a timestamp when states are changed
-;; ;; @ triggers a note when states are changed
+;; ! triggers a timestamp when states are changed
+;; @ triggers a note when states are changed
 (setq org-todo-keywords
       '((sequence "TODO(t!)" "PENDING(p!)" "|" "DONE(d!)" "CANCELED(c!/@)")))
 (setq org-todo-keyword-faces
@@ -534,18 +577,40 @@
 (setq org-agenda-custom-commands
       '(("o" "At the office" tags-todo "@office")
 	("h" "At home" tags-todo "@home")
-	("w" "on the way" tags-todo "@way")))
+	("w" "On the way" tags-todo "@way")))
 
+(setq inbox-file (expand-file-name "inbox.org" gtd-directory))
+(setq notes-file (expand-file-name "notes.org" gtd-directory))
+(setq tasks-file (expand-file-name "tasks.org" gtd-directory))
+(setq someday-file (expand-file-name "someday.org" gtd-directory))
+(setq finished-file (expand-file-name "finished.org" gtd-directory))
+(setq canceled-file (expand-file-name "canceled.org" gtd-directory))
+
+;; I don't know why org-agenda-files must be a list of string literals here, variables cannot work.
 (setq org-agenda-files '("~/.emacs.d/GTD/inbox.org"
-                         "~/.emacs.d/GTD/gtd.org"
-                         "~/.emacs.d/GTD/tickler.org"))
+			 "~/.emacs.d/GTD/tasks.org"
+			 "~/.emacs.d/GTD/someday.org"
+			 "~/.emacs.d/GTD/finished.org"
+			 "~/.emacs.d/GTD/canceled.org"))
+
 
 (setq org-capture-templates '(("t" "Todo [inbox]" entry
-                               (file+headline "~/.emacs.d/GTD/inbox.org" "Tasks")
-                               "* TODO %i%? %^g")
-                              ("T" "Tickler" entry
-                               (file+headline "~/.emacs.d/GTD/tickler.org" "Tickler")
-                               "* %i%? \n %U %^g")))
-(setq org-refile-targets '(("~/.emacs.d/GTD/gtd.org" :maxlevel . 3)
-                           ("~/.emacs.d/GTD/someday.org" :level . 1)
-                           ("~/.emacs.d/GTD/tickler.org" :maxlevel . 2)))
+                               (file+headline inbox-file "Inbox")
+                               "* TODO %i%? %T %^g" :empty-lines-before 1)
+                              ("n" "Notes" entry
+                               (file+headline notes-file "Notes")
+                               "* %i%? \n %T %^g" :empty-lines-before 1 :prepend 1)))
+(setq org-refile-targets '((inbox-file :maxlevel . 2)
+                           (tasks-file :maxlevel . 2)
+                           (someday-file :maxlevel . 2)
+                           (finished-file :maxlevel . 2)
+                           (canceled-file :maxlevel . 2)))
+
+
+;; ;; (custom-set-variables
+;; ;;  '(org-capture-templates
+;; ;;    (quote
+;; ;;     (("t" "task" entry
+;; ;;       (file+headline org-default-notes-file "Tasks")
+;; ;;       "* TODO %?\n %i\n %a" :empty-lines-before 1)))))
+

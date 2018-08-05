@@ -4,7 +4,3 @@
 #+TAGS: { @office(o) @home(h) @way(w) }
 * Someday
 #+CATEGORY: someday
-** CANCELED Learn French                                              :@home:
-   DEADLINE: <2018-07-29 日> SCHEDULED: <2018-07-29 日>
-   - State "CANCELED"   from "PENDING"    [2018-07-29 日 23:57]
-   - State "PENDING"    from "TODO"       [2018-07-29 日 23:57]
