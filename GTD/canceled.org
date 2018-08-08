@@ -4,3 +4,7 @@
 #+TAGS: { @office(o) @home(h) @way(w) }
 * Canceled
 #+CATEGORY: canceled
+** CANCELED Try to implement the shared data structure of Clojure with Java   <2018-08-07 二 12:33> :@home:
+   - Note taken on [2018-08-07 二 15:24] \\
+     too hard, moreover no enough time
+   - State "CANCELED"   from "TODO"       [2018-08-07 二 15:24]

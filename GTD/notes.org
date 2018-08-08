@@ -2,6 +2,25 @@
 #+STARTUP: hidestars
 #+PROPERTY: CLOCK_INTO_DRAWER t
 * Notes
+
+** JUnit annotations
+   @Test(expected=Exception.class, timeout=2000): expect to throw Exception.class, timeout 2000
+   @BeforeClass: run before loading class
+   @AfterClass: run after all the methods
+   @Before: run before every method being invoked
+   @After: run after every method being invoked
+   @Ignore(reasonWhyString): ignore the method
+   @RunWith(Suite.class): specify unit suite
+   -- @Suite.SuiteClasses({TestTask1.class, TestTask2.class, TestTask3.class})
+   @RunWith(Parameterized.class): set test parameters
+   -- @Parameters: multi-tests
+  <2018-08-07 二 19:55>
+** Why Enum is the best way to implement Java Singleton class? 
+   no thread concurrency problems, cannot be reflected, serialization and deserialization's mechanism is different from normal java class
+  <2018-08-07 二 11:50>
+** Given a file's relative path, how to get its absolute path with Java?
+   System.getProperty("user.dir") can get current java project's directory path.
+  <2018-08-07 二 10:37>
 ** 懒汉singleton应该在private contructor中添加判断，在创建第二个实例时，抛出异常，防止反射破坏单例 
 #+BEGIN_SRC java
 public class Singleton {
