@@ -3,6 +3,35 @@
 #+PROPERTY: CLOCK_INTO_DRAWER t
 * Notes
 
+** private field can be directly accessed within the class body (lexically) 
+#+BEGIN_SRC java
+  public class App {
+    private String field = "default";
+
+    public static Object func() {
+      App app = new App();
+      return app.field;		// 
+    }
+  }
+#+END_SRC
+  <2018-08-15 三 00:37>
+** Java5's covariant return type
+   覆写方法的返回值可以是原方法的子类型
+  <2018-08-15 三 00:18>
+** Java equals method's Reflexive, Symmetric, Transitive, Consistent, Non-nullity 
+*** Reflexive: always a.equals(a) == true
+*** Symmetric: if a.equals(b) then b.equals(a)
+*** Transitive: if a.equals(b) and b.equals(c) then a.equals(c)
+*** Consistent: always a.equals(b) or not when a and b are not changed
+*** Non-nullity: always a.equals(null) == false
+    #+BEGIN_SRC java
+    public boolean equals(Object o) {
+        if (!(o instanceof CurrentClass)) { // null instanceof Class will return false always
+	    return false;
+	}
+    }
+    #+END_SRC
+    <2018-08-12 日 20:14>
 ** JUnit annotations
    @Test(expected=Exception.class, timeout=2000): expect to throw Exception.class, timeout 2000
    @BeforeClass: run before loading class
@@ -14,15 +43,15 @@
    -- @Suite.SuiteClasses({TestTask1.class, TestTask2.class, TestTask3.class})
    @RunWith(Parameterized.class): set test parameters
    -- @Parameters: multi-tests
-  <2018-08-07 二 19:55>
+   <2018-08-07 二 19:55>
 ** Why Enum is the best way to implement Java Singleton class? 
    no thread concurrency problems, cannot be reflected, serialization and deserialization's mechanism is different from normal java class
-  <2018-08-07 二 11:50>
+   <2018-08-07 二 11:50>
 ** Given a file's relative path, how to get its absolute path with Java?
    System.getProperty("user.dir") can get current java project's directory path.
-  <2018-08-07 二 10:37>
+   <2018-08-07 二 10:37>
 ** 懒汉singleton应该在private contructor中添加判断，在创建第二个实例时，抛出异常，防止反射破坏单例 
-#+BEGIN_SRC java
+   #+BEGIN_SRC java
 public class Singleton {
     private final static Singleton INSTANCE = new Singleton();
     private Singleton() {
@@ -34,5 +63,5 @@ public class Singleton {
         return INSTANCE;
     }
 }
-#+END_SRC
-  [2018-08-05 日 20:34]
+   #+END_SRC
+   [2018-08-05 日 20:34]

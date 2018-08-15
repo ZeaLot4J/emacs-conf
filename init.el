@@ -176,7 +176,9 @@
   (setq browse-kill-ring-highlight-inserted-item (quote solid))
   (setq browse-kill-ring-recenter nil)
   (setq browse-kill-ring-resize-window nil)
-  (setq browse-kill-ring-show-preview nil))
+  (setq browse-kill-ring-show-preview t)
+  (setq browse-kill-ring-maximum-display-length 60)
+  (setq kill-ring-max 20))
 
 (use-package meghanada
   :config
@@ -529,10 +531,11 @@
     ("pt" "fmt.Println(3)")
     ("fu" "func(x int) int { return 1 }")
     ("v" "var = 3")))
+(define-abbrev-table 'java-mode-abbrev-table
+  '(
+    ("syso" "System.out.println()")))
 ;;(set-default 'abbrev-mode t)
 ;;(global-set-key (kbd "<tab>") 'expand-abbrev)
-
-
 
 
 
@@ -613,4 +616,3 @@
 ;; ;;     (("t" "task" entry
 ;; ;;       (file+headline org-default-notes-file "Tasks")
 ;; ;;       "* TODO %?\n %i\n %a" :empty-lines-before 1)))))
-

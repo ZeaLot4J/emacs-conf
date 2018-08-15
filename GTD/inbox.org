@@ -4,3 +4,4 @@
 #+TAGS: { @office(o) @home(h) @way(w) }
 * Inbox
 #+CATEGORY: inbox
+
