@@ -10,3 +10,4 @@
 ** TODO learn jaxb <2018-08-15 三 22:29>                              :@home:
 
 ** TODO learn Files, Paths, etc <2018-08-15 三 22:30>                 :@home:
+** TODO learn how to write yasnippet <2018-08-15 三 23:27>            :@home:

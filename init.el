@@ -114,7 +114,9 @@
   (add-hook 'C-mode-hook 'yas-minor-mode)
   (add-hook 'C++-mode-hook 'yas-minor-mode)
   (add-hook 'nxml-mode-hook 'yas-minor-mode))
-(use-package yasnippet-snippets)
+(use-package yasnippet-snippets
+  :config
+  (setq yas-wrap-around-region t))
 
 ;; powerful multiple cursors operations instead of iedit
 (use-package multiple-cursors

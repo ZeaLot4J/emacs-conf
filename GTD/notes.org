@@ -3,8 +3,67 @@
 #+PROPERTY: CLOCK_INTO_DRAWER t
 * Notes
 
+** yasnippet usages 
+*** M-x yas-tryout-snippet, key binding: C-c C-t
+    when editing a snippet, tryout its expanded result.
+*** meta data
+    1. # -- content above this line count as meta data.
+    2. # key: snippet abbrev
+    3. # name: snippet name
+    4. for other meta data,  see docs.
+*** template syntax
+    1. `emacs-lisp` to eval elisp
+    2. $1 $2 $3 to navigate cursors with TAB, $0 is exit point
+    3. ${1:placeholder}
+    4. same $N are mirrors
+    5. variable yas-selected-text or set yas-wrap-around-region to t
+    6. variable yas-text, yas-field-value N, to transform mirrors
+    7. ${N:$(emacs-lisp)} is used on mirrors and ${N:$$(emacs-lisp)} is used inside field
+    8. yas-choose-value to display a option list to select you want
+    9. examples:
+    #+BEGIN_SRC snippet
+# -*- mode: snippet -*-
+# name: for
+# key: for
+for (${1:int i = 0}; ${2:i < N}; ${3:i++}) {
+    $0
+}
+\begin{$1}
+    $0
+    $1$1
+\end{$1}
+- (${1:id})${2:foo}
+{
+    return $2;
+}
+
+- (void)set${2:$(capitalize yas-text)}:($1)aValue
+{
+    [$2 autorelease];
+    $2 = [aValue retain];
+}
+$0
+${1:$(make-string (string-width yas-text) ?\=)}
+${1:Title}
+${1:$(make-string (string-width yas-text) ?\=)}
+
+$0
+(format "${1:formatted %s}" "${2:value}")
+=> "${1:$(ignore-errors (format (yas-field-value 1) (yas-field-value 2)))}"
+#define "${1:$$(upcase yas-text)}"
+<div align="${2:$$(yas-choose-value '("right" "center" "left"))}">
+  $0
+</div>
+\section{${1:"Titel der Tour"}}%
+\index{$1}%
+\label{${2:"waiting for reftex-label call..."$(unless yas-modified-p (reftex-label nil 'dont-
+insert))}}%
+# --
+<div${1: id="${2:some_id}"}>$0</div>
+    #+END_SRC
+    <2018-08-15 三 23:38>
 ** private field can be directly accessed within the class body (lexically) 
-#+BEGIN_SRC java
+   #+BEGIN_SRC java
   public class App {
     private String field = "default";
 
@@ -13,11 +72,11 @@
       return app.field;		// 
     }
   }
-#+END_SRC
-  <2018-08-15 三 00:37>
+   #+END_SRC
+   <2018-08-15 三 00:37>
 ** Java5's covariant return type
    覆写方法的返回值可以是原方法的子类型
-  <2018-08-15 三 00:18>
+   <2018-08-15 三 00:18>
 ** Java equals method's Reflexive, Symmetric, Transitive, Consistent, Non-nullity 
 *** Reflexive: always a.equals(a) == true
 *** Symmetric: if a.equals(b) then b.equals(a)
