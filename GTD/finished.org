@@ -4,3 +4,14 @@
 #+TAGS: { @office(o) @home(h) @way(w) }
 * Finished
 #+CATEGORY: finished
+** DONE learn jaxb <2018-08-15 三 22:29>                              :@home:
+
+   - State "DONE"       from "TODO"       [2018-08-16 四 23:02]
+** DONE learn Files, Paths, etc <2018-08-15 三 22:30>                 :@home:
+   - State "DONE"       from "TODO"       [2018-08-16 四 23:02]
+** DONE learn how to write yasnippet <2018-08-15 三 23:27>            :@home:
+   - State "DONE"       from "TODO"       [2018-08-16 四 23:02]
+** DONE learn Java nio <2018-08-12 日 13:35>                          :@home:
+
+   - State "DONE"       from "PENDING"    [2018-08-16 四 23:03]
+   - State "PENDING"    from "TODO"       [2018-08-16 四 23:03]

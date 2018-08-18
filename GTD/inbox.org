@@ -5,3 +5,4 @@
 * Inbox
 #+CATEGORY: inbox
 
+** TODO install oh-my-zsh and explore it <2018-08-18 六 17:20>        :@home:

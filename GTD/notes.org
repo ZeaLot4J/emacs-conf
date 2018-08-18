@@ -1,9 +1,59 @@
 #+STARTUP: hideall
 #+STARTUP: hidestars
 #+PROPERTY: CLOCK_INTO_DRAWER t
+#+TAGS: { java emacs vue }
 * Notes
 
-** yasnippet usages 
+** In vue, component template should contain exactly one root element.  :vue:
+#+BEGIN_SRC javascript
+var template = `<div> all other html should be inside <div>`
+#+END_SRC
+  <2018-08-18 六 16:54>
+** two ways to transfer params in vue-router                            :vue:
+   1. :param    $route.params.param
+   2. ?param=   $route.query.param
+   #+BEGIN_SRC javascript
+{
+  path: '/home/:name?age=22',
+  template: `
+    <div>
+      <h1>{{$route.params.name}}</h1>
+      <h1>{{$route.query.age}}</h1>
+    </div>
+  `
+}
+   #+END_SRC
+   <2018-08-18 六 16:23>
+** how to avoid {{content}}'s flash in Vue                              :vue:
+   #+BEGIN_SRC css
+[v-cloak] {
+  display: none
+}
+<div id="app" v-cloak></div>
+   #+END_SRC
+   or put the the script of vue.js in the header
+   <2018-08-18 六 15:51>
+** how to safely access a class's inner final collection field         :java:
+*** produce a deep copy of the field
+*** return an immutable view of that collection field
+    #+BEGIN_SRC java
+private static final Object[] PRIVATE_VALUES = {...};
+public static final List<Object> VALUES = Collections.UnmodifiableList(PRIVATE_VALUES);
+// or
+public static List<Object> get() {
+    return Collections.UnmodifiableList(PRIVATE_VALUES);
+}
+    #+END_SRC
+    <2018-08-17 五 22:43>
+** How to define an immutable class                                    :java:
+   1. use final before class to prohibit inheritance and method override.
+   2. use final before every field to prohibit being directly accessed.
+   3. if the field is a reference type, its getter or access method should return a piece of deep copy.
+   <2018-08-17 五 22:35>
+** Do not allow access to inner array field, even it's final, which will bring in problems :java:
+   because while it's reference cannot be modified, the content of the array can do.
+   <2018-08-17 五 08:38>
+** yasnippet usages                                                   :emacs:
 *** M-x yas-tryout-snippet, key binding: C-c C-t
     when editing a snippet, tryout its expanded result.
 *** meta data
@@ -19,8 +69,7 @@
     5. variable yas-selected-text or set yas-wrap-around-region to t
     6. variable yas-text, yas-field-value N, to transform mirrors
     7. ${N:$(emacs-lisp)} is used on mirrors and ${N:$$(emacs-lisp)} is used inside field
-    8. yas-choose-value to display a option list to select you want
-    9. examples:
+    8. yas-choose-value to display a option list to select what you want
     #+BEGIN_SRC snippet
 # -*- mode: snippet -*-
 # name: for
@@ -62,7 +111,7 @@ insert))}}%
 <div${1: id="${2:some_id}"}>$0</div>
     #+END_SRC
     <2018-08-15 三 23:38>
-** private field can be directly accessed within the class body (lexically) 
+** private field can be directly accessed within the class body (lexically) :java:
    #+BEGIN_SRC java
   public class App {
     private String field = "default";
@@ -74,10 +123,10 @@ insert))}}%
   }
    #+END_SRC
    <2018-08-15 三 00:37>
-** Java5's covariant return type
+** Java5's covariant return type                                       :java:
    覆写方法的返回值可以是原方法的子类型
    <2018-08-15 三 00:18>
-** Java equals method's Reflexive, Symmetric, Transitive, Consistent, Non-nullity 
+** Java equals method's Reflexive, Symmetric, Transitive, Consistent, Non-nullity :java:
 *** Reflexive: always a.equals(a) == true
 *** Symmetric: if a.equals(b) then b.equals(a)
 *** Transitive: if a.equals(b) and b.equals(c) then a.equals(c)
@@ -91,7 +140,7 @@ insert))}}%
     }
     #+END_SRC
     <2018-08-12 日 20:14>
-** JUnit annotations
+** JUnit annotations                                                   :java:
    @Test(expected=Exception.class, timeout=2000): expect to throw Exception.class, timeout 2000
    @BeforeClass: run before loading class
    @AfterClass: run after all the methods
@@ -103,13 +152,13 @@ insert))}}%
    @RunWith(Parameterized.class): set test parameters
    -- @Parameters: multi-tests
    <2018-08-07 二 19:55>
-** Why Enum is the best way to implement Java Singleton class? 
+** Why Enum is the best way to implement Java Singleton class?         :java:
    no thread concurrency problems, cannot be reflected, serialization and deserialization's mechanism is different from normal java class
    <2018-08-07 二 11:50>
-** Given a file's relative path, how to get its absolute path with Java?
+** Given a file's relative path, how to get its absolute path with Java? :java:
    System.getProperty("user.dir") can get current java project's directory path.
    <2018-08-07 二 10:37>
-** 懒汉singleton应该在private contructor中添加判断，在创建第二个实例时，抛出异常，防止反射破坏单例 
+** hungry singleton应该在private contructor中添加判断，在创建第二个实例时，抛出异常，防止反射破坏单例 :java:
    #+BEGIN_SRC java
 public class Singleton {
     private final static Singleton INSTANCE = new Singleton();

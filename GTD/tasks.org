@@ -4,10 +4,4 @@
 #+TAGS: { @office(o) @home(h) @way(w) }
 * Tasks
 #+CATEGORY: task
-** TODO learn Java nio <2018-08-12 日 13:35>                          :@home:
-
-** TODO have a brief knowledge of Jetty <2018-08-12 日 13:35>         :@home:
-** TODO learn jaxb <2018-08-15 三 22:29>                              :@home:
-
-** TODO learn Files, Paths, etc <2018-08-15 三 22:30>                 :@home:
-** TODO learn how to write yasnippet <2018-08-15 三 23:27>            :@home:
+** TODO learn Java8's new feature and practice <2018-08-16 四 23:04>  :@home:

@@ -16,10 +16,10 @@
 ;; ensure packages that are not installed yet will be installed automatically
 (setq use-package-always-ensure t)
 
-(use-package ahungry-theme)
+(use-package dracula-theme)
 
 (if (display-graphic-p)
-    (load-theme 'ahungry t) 		;t means no load theme confirm
+    (load-theme 'dracula t) 		;t means no load theme confirm
   (load-theme 'tsdh-dark t))
 
 
@@ -109,7 +109,7 @@
 (use-package yasnippet
   :config
   (add-hook 'ruby-mode-hook 'yas-minor-mode)
-  (add-hook 'web-mode-hook 'yas-minor-mode)
+  ;;  (add-hook 'web-mode-hook 'yas-minor-mode)
   (add-hook 'js2-mode-hook 'yas-minor-mode)
   (add-hook 'C-mode-hook 'yas-minor-mode)
   (add-hook 'C++-mode-hook 'yas-minor-mode)
@@ -165,10 +165,6 @@
   :config
   (ace-window-display-mode t))
 
-;; split windows with golden ratio
-(use-package golden-ratio
-  :bind ("<f12>" . golden-ratio))
-
 (use-package browse-kill-ring
   :bind ("M-y" . browse-kill-ring)
   :config
@@ -200,6 +196,13 @@
 	      (setq meghanada-java-path "java")
 	      (setq meghanada-maven-path "mvn")))))
 
+(use-package golden-ratio
+  :bind ("<f12>" . golden-ratio))
+
+(use-package emmet-mode
+  :bind ("<tab>" . emmet-expand-line)
+  :config
+  (add-hook 'web-mode-hook 'emmet-mode))
 
 
 (setq hippie-expand-try-function-list '(try-expand-debbrev
@@ -282,7 +285,7 @@
 
 
 ;; transparent background
-(set-frame-parameter (selected-frame) 'alpha '(85 . 50))
+;;(set-frame-parameter (selected-frame) 'alpha '(85 . 50))
 ;; no welcome buffer when opening emacs
 (setq inhibit-splash-screen t)
 ;; open this config file with F1
@@ -533,9 +536,6 @@
     ("pt" "fmt.Println(3)")
     ("fu" "func(x int) int { return 1 }")
     ("v" "var = 3")))
-(define-abbrev-table 'java-mode-abbrev-table
-  '(
-    ("syso" "System.out.println()")))
 ;;(set-default 'abbrev-mode t)
 ;;(global-set-key (kbd "<tab>") 'expand-abbrev)
 
@@ -618,3 +618,17 @@
 ;; ;;     (("t" "task" entry
 ;; ;;       (file+headline org-default-notes-file "Tasks")
 ;; ;;       "* TODO %?\n %i\n %a" :empty-lines-before 1)))))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (dracula-theme solarized-dark-theme emmet-mode zoutline zenburn-theme youdao-dictionary yasnippet-snippets web-mode use-package solarized-theme smooth-scrolling smartparens ruby-compilation projectile neotree multiple-cursors monokai-theme meghanada magit jump js2-mode iedit hydra htmlize golden-ratio github-theme expand-region counsel cider browse-kill-ring all-the-icons-dired ahungry-theme ag ace-window))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

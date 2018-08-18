@@ -5,3 +5,4 @@
 * Someday
 #+CATEGORY: someday
 ** TODO learn emacs-lisp to be dangerous <2018-08-16 四 00:51>        :@home:
+** TODO have a brief knowledge of Jetty <2018-08-12 日 13:35>         :@home:
