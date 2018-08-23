@@ -16,10 +16,10 @@
 ;; ensure packages that are not installed yet will be installed automatically
 (setq use-package-always-ensure t)
 
-(use-package dracula-theme)
+(use-package solarized-theme)
 
 (if (display-graphic-p)
-    (load-theme 'dracula t) 		;t means no load theme confirm
+    (load-theme 'solarized-dark t)		;t means no load theme confirm
   (load-theme 'tsdh-dark t))
 
 
@@ -137,7 +137,7 @@
 ;; (use-package neotree
 ;;   :bind ("<f9>" . neotree-toggle)
 ;;   :config
-;;   (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
+(setq neo-theme (if (display-graphic-p) 'icons 'arrow))
 
 ;; tree icons
 (use-package all-the-icons)
@@ -200,10 +200,13 @@
   :bind ("<f12>" . golden-ratio))
 
 (use-package emmet-mode
-  :bind ("<tab>" . emmet-expand-line)
   :config
-  (add-hook 'web-mode-hook 'emmet-mode))
+  (add-hook 'web-mode-hook 'emmet-mode)
+  (define-key web-mode-map (kbd "<tab>") 'emmet-expand-line))
 
+
+(use-package cheat-sh
+  :bind ("C-q" . cheat-sh))
 
 (setq hippie-expand-try-function-list '(try-expand-debbrev
                                         try-expand-debbrev-all-buffers
@@ -477,9 +480,6 @@
     ("uns" "understand" )
     ("ur" "you are" )
     ("btw" "by the way" )
-    ("cnt" "can't" )
-    ("ddnt" "didn't" )
-    ("dnt" "don't" )
     ;; english word abbrev
     ("ann" "announcement" )
     ("arg" "argument" )
@@ -625,7 +625,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (dracula-theme solarized-dark-theme emmet-mode zoutline zenburn-theme youdao-dictionary yasnippet-snippets web-mode use-package solarized-theme smooth-scrolling smartparens ruby-compilation projectile neotree multiple-cursors monokai-theme meghanada magit jump js2-mode iedit hydra htmlize golden-ratio github-theme expand-region counsel cider browse-kill-ring all-the-icons-dired ahungry-theme ag ace-window))))
+    (cheat-sh dracula-theme solarized-dark-theme emmet-mode zoutline zenburn-theme youdao-dictionary yasnippet-snippets web-mode use-package solarized-theme smooth-scrolling smartparens ruby-compilation projectile neotree multiple-cursors monokai-theme meghanada magit jump js2-mode iedit hydra htmlize golden-ratio github-theme expand-region counsel cider browse-kill-ring all-the-icons-dired ahungry-theme ag ace-window))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

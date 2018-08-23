@@ -4,4 +4,3 @@
 #+TAGS: { @office(o) @home(h) @way(w) }
 * Tasks
 #+CATEGORY: task
-** TODO learn Java8's new feature and practice <2018-08-16 四 23:04>  :@home:

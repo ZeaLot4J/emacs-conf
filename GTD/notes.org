@@ -1,9 +1,160 @@
 #+STARTUP: hideall
 #+STARTUP: hidestars
 #+PROPERTY: CLOCK_INTO_DRAWER t
-#+TAGS: { java emacs vue }
+#+TAGS: { java emacs vue linux }
 * Notes
+#+CATEGORY Notes
 
+** in String  class, there is an CASE_INSENSITIVE_ORDER static comparator class
+  <2018-08-23 四 08:42>
+** SQL performing skills                                                :sql:
+   SQL语句常用优化技巧
+   答：要提高SQL语句的执行效率，最常见的方法就是建立索引，以及尽量避免全表扫描。一个简单的优化，也许能让你的SQL执行效率提高几倍，甚至几十倍。
+   1.避免在where子句中使用 is null 或 is not null 对字段进行判断。
+   如：select id from table where name is null
+   在这个查询中，就算我们为 name 字段设置了索引，查询分析器也不会使用，因此查询效率底下。为了避免这样的查询，在数据库设计的时候，尽量将可能会出现 null 值的字段设置默认值，这里如果我们将 name 字段的默认值设置为0，那么我们就可以这样查询：
+   select id from table where name = 0
+   2.避免在 where 子句中使用 != 或 <> 操作符。
+   如：select name from table where id <> 0
+   数据库在查询时，对 != 或 <> 操作符不会使用索引，而对于 < 、 <= 、 = 、 > 、 >= 、 BETWEEN AND，数据库才会使用索引。因此对于上面的查询，正确写法应该是：
+   select name from table where id < 0
+   union all
+   select name from table where id > 0
+   这里我们为什么没有使用 or 来链接 where 后的两个条件呢？这就是我们下面要说的第3个优化技巧。
+   3.避免在 where 子句中使用 or来链接条件。
+   如：select id from tabel where name = 'UncleToo' or name = 'PHP'
+   这种情况，我们可以这样写：
+   select id from tabel where name = 'UncleToo'
+   union all
+   select id from tabel where name = 'PHP'
+   4.少用 in 或 not in。
+   虽然对于 in 的条件会使用索引，不会全表扫描，但是在某些特定的情况，使用其他方法也许效果更好。如：
+   select name from tabel where id in(1,2,3,4,5)
+   像这种连续的数值，我们可以使用 BETWEEN AND，如：
+   select name from tabel where id between 1 and 5
+   5.注意 like 中通配符的使用
+   下面的语句会导致全表扫描，尽量少用。如：
+   select id from tabel where name like'%UncleToo%'
+   或者
+   select id from tabel where name like'%UncleToo'
+   而下面的语句执行效率要快的多，因为它使用了索引：
+   select id from tabel where name like'UncleToo%'
+   6.避免在 where 子句中对字段进行表达式操作。
+   如：select name from table where id/2 = 100
+   正确的写法应该是：
+   select name from table where id = 100*2
+   7.避免在 where 子句中对字段进行函数操作。
+   如：select id from table where substring(name,1,8) = 'UncleToo'
+   或 select id from table where datediff(day,datefield,'2014-07-17') >= 0
+   这两条语句中都对字段进行了函数处理，这样就是的查询分析器放弃了索引的使用。正确的写法是这样的：
+   select id from table where name like'UncleToo%'
+   或 select id from table where datefield <= '2014-07-17'
+   也就是说，不要在 where 子句中的 = 左边进行函数、算术运算或其他表达式运算。
+   8.在子查询中，用 exists 代替 in 是一个好的选择。
+   如：select name from a where id in(select id from b) 
+   如果我们将这条语句换成下面的写法：select name from a where id exists(select 1 from b where id = a.id)
+   这样，查询出来的结果一样，但是下面这条语句查询的速度要快的多。
+   9.对查询进行优化，要尽量避免全表扫描，首先应考虑在 where 及 order by 涉及的列上建立索引。
+   10.不要在 where 子句中的“=”左边进行函数、算术运算或其他表达式运算，否则系统将可能无法正确使用索引。
+   如果使用到了临时表，在存储过程的最后务必将所有的临时表显式删除，先 truncate table ，然后 drop table ，这样可以避免系统表的较长时间锁定。
+   尽量避免大事务操作，提高系统并发能力。
+   <2018-08-20 一 23:29>
+** use inheritance if and only if the relationship between subclass and superclass is is-a, that is, the subclass is a superclass(woman is a human) :java:
+  <2018-08-20 一 21:44>
+** use composition to extend a class instead of inheritance, here is the reason why below :java:
+#+BEGIN_SRC java
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+
+public class InstrumentedHashSet<E> extends HashSet<E> {
+  private static final long serialVersionUID = 1L;
+  private int addCount = 0;
+
+  public static void main(String[] args) {
+    InstrumentedHashSet<String> set = new InstrumentedHashSet<>();
+    set.addAll(Arrays.asList("java", "ruby", "lisp", "python"));
+    System.out.println(set.getAddCount());
+    // the result is 8 instead of 4, because addAll() will invoke inner
+    // add() which has been overridden, so try best to use composition
+    // to extend a class instead of inheritance
+  }
+
+  public InstrumentedHashSet() {}
+
+  public InstrumentedHashSet(int initCap, float loadFactor) {
+    super(initCap, loadFactor);
+  }
+
+  @Override
+  public boolean add(E e) {
+    this.addCount++;
+    return super.add(e);
+  }
+
+  public boolean addAll(Collection<? extends E> c) {
+    this.addCount += c.size();
+    return super.addAll(c);
+  }
+
+  public int getAddCount() {
+    return this.addCount;
+  }
+}
+
+#+END_SRC
+here is another case that exposes the harzard of inheritance:
+#+BEGIN_SRC java
+public class Sub extends Super {
+  private final Date date;
+
+  Sub() {
+    date = new Date();
+  }
+
+  @Override
+  void overrideMe() {
+    System.out.println(this.date);
+  }
+
+  public static void main(String[] args) {
+    Sub sub = new Sub();
+    sub.overrideMe();
+  }
+}
+class Super {
+  Super() {
+    overrideMe();
+  }
+
+  void overrideMe() {}
+}
+#+END_SRC
+  <2018-08-20 一 21:25>
+** Optional should not be used as method parameters, field.            :java:
+  <2018-08-19 日 22:25>
+** The difference between map and flatMap in Java8                     :java:
+*** Stream's map and flatMap
+   map receive a function that returns an any-type object, as argument.
+   flatMap receive a function that return only Stream type object.
+
+*** Optional's map and flatMap
+   likewise, in Optional, map receive a function that should return an any-type object, which will be wrapped in an Optional automatically.
+   flatMap receive a function that should return an Optional.
+  <2018-08-19 日 18:39>
+** when transfering list to map with Collectors.toMap, supply a function (oldValue, newValue)  -> oldValue/newValue to avoid duplicate key exception.
+  <2018-08-19 日 14:48>
+** Stream object cannot be reused, once it is consumed or used, the stream will be closed, it will throw an IllegalStateException, saying “stream is closed”. :java:
+  <2018-08-19 日 14:16>
+** In linux, use cat /dev/zero > somefile to generate a file full with bit zero, it can be very large :linux:
+  <2018-08-18 六 23:39>
+** In linux, use cat /dev/null > somefile to clear the content of a certain file withour deleting it :linux:
+   ln -s /dev/null litterbox.txt can make a trash inlet, any data into litterbox.txt will disappear
+  <2018-08-18 六 23:28>
+** rlwrap is a very useful command tool to allow cursor moves in some commandline programs such as scheme, sqlplus :linux:
+  <2018-08-18 六 21:36>
+** In vue, when using v-for to render a list, try to provide a prop key to each item so that vue can reuse these items. :vue:
+  <2018-08-18 六 18:57>
 ** In vue, component template should contain exactly one root element.  :vue:
 #+BEGIN_SRC javascript
 var template = `<div> all other html should be inside <div>`
