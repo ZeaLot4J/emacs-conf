@@ -58,12 +58,9 @@
   :config
   (setq ag-highlight-search t))
 
-
 ;; smooth scrolling
-(use-package smooth-scrolling
-  :config
-  (smooth-scrolling-mode t)
-  (setq smooth-scroll-margin 2))
+(setq scroll-margin 3
+      scroll-conservatively 10000)
 
 ;; expand or contract selected region
 (use-package expand-region
@@ -220,6 +217,8 @@
                                         try-complete-lisp-symbol))
 (global-set-key (kbd "M-/") 'hippie-expand)
 
+;; use ibuffer to take the place of bufferList
+(global-set-key (kbd "C-x C-b") 'ibuffer)
 
 
 
@@ -453,6 +452,11 @@
       [?\C-e return])
 (global-set-key (kbd "C-o") 'newline-at-any-point)
 
+;; mouse will move away when the cursor meets it.
+(mouse-avoidance-mode 'animate)
+
+;; emacs can open pictures
+(auto-image-file-mode)
 
 
 ;; enlarge and shrink current window
@@ -612,23 +616,3 @@
                            (canceled-file :maxlevel . 2)))
 
 
-;; ;; (custom-set-variables
-;; ;;  '(org-capture-templates
-;; ;;    (quote
-;; ;;     (("t" "task" entry
-;; ;;       (file+headline org-default-notes-file "Tasks")
-;; ;;       "* TODO %?\n %i\n %a" :empty-lines-before 1)))))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (cheat-sh dracula-theme solarized-dark-theme emmet-mode zoutline zenburn-theme youdao-dictionary yasnippet-snippets web-mode use-package solarized-theme smooth-scrolling smartparens ruby-compilation projectile neotree multiple-cursors monokai-theme meghanada magit jump js2-mode iedit hydra htmlize golden-ratio github-theme expand-region counsel cider browse-kill-ring all-the-icons-dired ahungry-theme ag ace-window))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
