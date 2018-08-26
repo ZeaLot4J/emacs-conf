@@ -24,3 +24,5 @@
    - State "DONE"       from "TODO"       [2018-08-20 一 17:55]
    - Note taken on [2018-08-20 一 17:55] \\
      interface Spliterator is used for parallel stream operation.
+** DONE learn Base64 API of Java8 and picture's Base64 <2018-08-26 日 11:57> :@home:
+   - State "DONE"       from "TODO"       [2018-08-26 日 13:00]

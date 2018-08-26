@@ -16,10 +16,18 @@
 ;; ensure packages that are not installed yet will be installed automatically
 (setq use-package-always-ensure t)
 
-(use-package solarized-theme)
+;; my favorite themes:
+;; ahungry
+;; github
+;; solarized-dark
+;; solarized-light
+;; dracula
+;; eclipse
+;; abyss
+(use-package eclipse-theme)
 
 (if (display-graphic-p)
-    (load-theme 'solarized-dark t)		;t means no load theme confirm
+    (load-theme 'eclipse t)		;t means no load theme confirm
   (load-theme 'tsdh-dark t))
 
 
@@ -616,3 +624,17 @@
                            (canceled-file :maxlevel . 2)))
 
 
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (abyss-theme eclipse-theme zoutline zenburn-theme youdao-dictionary yasnippet-snippets web-mode use-package solarized-theme smartparens ruby-compilation projectile neotree multiple-cursors monokai-theme meghanada magit jump js2-mode iedit hydra htmlize golden-ratio github-theme expand-region emmet-mode dracula-theme counsel cider cheat-sh browse-kill-ring all-the-icons-dired ahungry-theme ag ace-window))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

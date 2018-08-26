@@ -4,3 +4,5 @@
 #+TAGS: { @office(o) @home(h) @way(w) }
 * Tasks
 #+CATEGORY: task
+** TODO use state machine to resolve XML <2018-08-23 四 23:30>        :@home:
+** TODO learn tree-way merge algorithm of git <2018-08-25 六 09:14>   :@home:

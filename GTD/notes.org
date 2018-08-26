@@ -3,10 +3,49 @@
 #+PROPERTY: CLOCK_INTO_DRAWER t
 #+TAGS: { java emacs vue linux }
 * Notes
-#+CATEGORY Notes
+  #+CATEGORY Notes
 
-** in String  class, there is an CASE_INSENSITIVE_ORDER static comparator class
-  <2018-08-23 四 08:42>
+** How to write a recursive function without function name?
+   #+BEGIN_SRC javascript
+// first, write a normal recursive function
+fact = function(n) {
+  return n == 0 ? 1 : n * fact(n - 1);
+};
+fact(5); // 120
+
+// second, add a function argument
+fact = function(f, n) {
+  return n == 0 ? 1 : n * f(f, n - 1);
+};
+fact(fact, 5); // 120
+
+// third, replace the function name 'fact' with its function body
+function(f, n) {
+  return n == 0 ? 1 : n * f(f, n - 1);
+}(function(f, n){
+  return n == 0 ? 1 : n * f(f, n - 1);
+}, 5); // 120
+
+// fourth, we can currify it, though it's not necessary.
+function(f){
+  return function(n) {
+    return n == 0 ? 1 : n * f(f)(n - 1);
+  };
+}(function(f){
+  return function(n) {
+    return n == 0 ? 1 : n * f(f)(n - 1);
+  };
+})(5);
+   #+END_SRC
+   <2018-08-27 一 00:12>
+** MessageFormat.format("{0, number, percent}{1, number, currency}{2, date, full}", a, b, c) can format strings with C# style :java:
+   <2018-08-25 六 09:34>
+** How a load config files within a project?                           :java:
+*** ResourceBundle.getBundle("propertyFileName").getString("key"), only suitable for loading .properties files
+*** Class.class.getResourceAsStream("/config.xml")
+    <2018-08-25 六 09:31>
+** in String  class, there is an CASE_INSENSITIVE_ORDER static comparator class :java:
+   <2018-08-23 四 08:42>
 ** SQL performing skills                                                :sql:
    SQL语句常用优化技巧
    答：要提高SQL语句的执行效率，最常见的方法就是建立索引，以及尽量避免全表扫描。一个简单的优化，也许能让你的SQL执行效率提高几倍，甚至几十倍。
@@ -60,9 +99,9 @@
    尽量避免大事务操作，提高系统并发能力。
    <2018-08-20 一 23:29>
 ** use inheritance if and only if the relationship between subclass and superclass is is-a, that is, the subclass is a superclass(woman is a human) :java:
-  <2018-08-20 一 21:44>
+   <2018-08-20 一 21:44>
 ** use composition to extend a class instead of inheritance, here is the reason why below :java:
-#+BEGIN_SRC java
+   #+BEGIN_SRC java
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -102,13 +141,14 @@ public class InstrumentedHashSet<E> extends HashSet<E> {
   }
 }
 
-#+END_SRC
-here is another case that exposes the harzard of inheritance:
-#+BEGIN_SRC java
+   #+END_SRC
+   here is another case that exposes the harzard of inheritance:
+   #+BEGIN_SRC java
 public class Sub extends Super {
   private final Date date;
 
   Sub() {
+    // here Super() is invoked before, overrideMe() will be invoked, but this.date has not been initialized yet...
     date = new Date();
   }
 
@@ -129,37 +169,37 @@ class Super {
 
   void overrideMe() {}
 }
-#+END_SRC
-  <2018-08-20 一 21:25>
+   #+END_SRC
+   <2018-08-20 一 21:25>
 ** Optional should not be used as method parameters, field.            :java:
-  <2018-08-19 日 22:25>
+   <2018-08-19 日 22:25>
 ** The difference between map and flatMap in Java8                     :java:
 *** Stream's map and flatMap
-   map receive a function that returns an any-type object, as argument.
-   flatMap receive a function that return only Stream type object.
+    map receive a function that returns an any-type object, as argument.
+    flatMap receive a function that return only Stream type object.
 
 *** Optional's map and flatMap
-   likewise, in Optional, map receive a function that should return an any-type object, which will be wrapped in an Optional automatically.
-   flatMap receive a function that should return an Optional.
-  <2018-08-19 日 18:39>
+    likewise, in Optional, map receive a function that should return an any-type object, which will be wrapped in an Optional automatically.
+    flatMap receive a function that should return an Optional.
+    <2018-08-19 日 18:39>
 ** when transfering list to map with Collectors.toMap, supply a function (oldValue, newValue)  -> oldValue/newValue to avoid duplicate key exception.
-  <2018-08-19 日 14:48>
+   <2018-08-19 日 14:48>
 ** Stream object cannot be reused, once it is consumed or used, the stream will be closed, it will throw an IllegalStateException, saying “stream is closed”. :java:
-  <2018-08-19 日 14:16>
+   <2018-08-19 日 14:16>
 ** In linux, use cat /dev/zero > somefile to generate a file full with bit zero, it can be very large :linux:
-  <2018-08-18 六 23:39>
-** In linux, use cat /dev/null > somefile to clear the content of a certain file withour deleting it :linux:
+   <2018-08-18 六 23:39>
+** In linux, use cat /dev/null > somefile to clear the content of a certain file without deleting it :linux:
    ln -s /dev/null litterbox.txt can make a trash inlet, any data into litterbox.txt will disappear
-  <2018-08-18 六 23:28>
+   <2018-08-18 六 23:28>
 ** rlwrap is a very useful command tool to allow cursor moves in some commandline programs such as scheme, sqlplus :linux:
-  <2018-08-18 六 21:36>
+   <2018-08-18 六 21:36>
 ** In vue, when using v-for to render a list, try to provide a prop key to each item so that vue can reuse these items. :vue:
-  <2018-08-18 六 18:57>
+   <2018-08-18 六 18:57>
 ** In vue, component template should contain exactly one root element.  :vue:
-#+BEGIN_SRC javascript
+   #+BEGIN_SRC javascript
 var template = `<div> all other html should be inside <div>`
-#+END_SRC
-  <2018-08-18 六 16:54>
+   #+END_SRC
+   <2018-08-18 六 16:54>
 ** two ways to transfer params in vue-router                            :vue:
    1. :param    $route.params.param
    2. ?param=   $route.query.param
@@ -222,44 +262,44 @@ public static List<Object> get() {
     7. ${N:$(emacs-lisp)} is used on mirrors and ${N:$$(emacs-lisp)} is used inside field
     8. yas-choose-value to display a option list to select what you want
     #+BEGIN_SRC snippet
-# -*- mode: snippet -*-
-# name: for
-# key: for
-for (${1:int i = 0}; ${2:i < N}; ${3:i++}) {
+    # -*- mode: snippet -*-
+    # name: for
+    # key: for
+    for (${1:int i = 0}; ${2:i < N}; ${3:i++}) {
     $0
-}
-\begin{$1}
+    }
+    \begin{$1}
     $0
     $1$1
-\end{$1}
-- (${1:id})${2:foo}
-{
+    \end{$1}
+    - (${1:id})${2:foo}
+    {
     return $2;
-}
+    }
 
-- (void)set${2:$(capitalize yas-text)}:($1)aValue
-{
+    - (void)set${2:$(capitalize yas-text)}:($1)aValue
+    {
     [$2 autorelease];
     $2 = [aValue retain];
-}
-$0
-${1:$(make-string (string-width yas-text) ?\=)}
-${1:Title}
-${1:$(make-string (string-width yas-text) ?\=)}
-
-$0
-(format "${1:formatted %s}" "${2:value}")
-=> "${1:$(ignore-errors (format (yas-field-value 1) (yas-field-value 2)))}"
-#define "${1:$$(upcase yas-text)}"
-<div align="${2:$$(yas-choose-value '("right" "center" "left"))}">
-  $0
-</div>
-\section{${1:"Titel der Tour"}}%
-\index{$1}%
-\label{${2:"waiting for reftex-label call..."$(unless yas-modified-p (reftex-label nil 'dont-
-insert))}}%
-# --
-<div${1: id="${2:some_id}"}>$0</div>
+    }
+    $0
+    ${1:$(make-string (string-width yas-text) ?\=)}
+    ${1:Title}
+    ${1:$(make-string (string-width yas-text) ?\=)}
+    
+    $0
+    (format "${1:formatted %s}" "${2:value}")
+    => "${1:$(ignore-errors (format (yas-field-value 1) (yas-field-value 2)))}"
+    #define "${1:$$(upcase yas-text)}"
+    <div align="${2:$$(yas-choose-value '("right" "center" "left"))}">
+    $0
+    </div>
+    \section{${1:"Titel der Tour"}}%
+    \index{$1}%
+    \label{${2:"waiting for reftex-label call..."$(unless yas-modified-p (reftex-label nil 'dont-
+    insert))}}%
+    # --
+    <div${1: id="${2:some_id}"}>$0</div>
     #+END_SRC
     <2018-08-15 三 23:38>
 ** private field can be directly accessed within the class body (lexically) :java:
