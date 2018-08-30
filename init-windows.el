@@ -16,12 +16,12 @@
 ;; ensure packages that are not installed yet will be installed automatically
 (setq use-package-always-ensure t)
 
-(use-package ahungry-theme)
+(use-package solarized-theme)
 
 (if (display-graphic-p)
-    (load-theme 'ahungry t) 		;t means no load theme confirm
-  (load-theme 'tsdh-dark t)
-  )
+    (load-theme 'solarized-dark t) 		;t means no load theme confirm
+  (load-theme 'tsdh-dark t))
+
 
 
 ;; turn off cursor's blink
@@ -47,10 +47,6 @@
 (use-package swiper
   :bind ("C-s" . swiper))
 
-(use-package ag
-  :config
-  (setq ag-highlight-search t))
-
 ;; dependency of counsel and swiper
 ;; what's more, it makes switch-to-buffer display a list
 (use-package ivy
@@ -58,12 +54,12 @@
   (ivy-mode 1)
   (setq ivy-use-virtual-buffers t))
 
-
-;; smooth scrolling
-(use-package smooth-scrolling
+(use-package ag
   :config
-  (smooth-scrolling-mode t)
-  (setq smooth-scroll-margin 2))
+  (setq ag-highlight-search t))
+
+(setq scroll-margin 3
+      scroll-conservatively 10000)
 
 ;; expand or contract selected region
 (use-package expand-region
@@ -94,7 +90,7 @@
     (sp-local-pair "<%" "%>")))
 ;; complete strings
 (use-package company
-  ;;  :bind ("M-/" . company-complete)
+  :bind ("M-/" . company-complete)
   :config
   (global-company-mode t))
 
@@ -102,6 +98,8 @@
 ;; emacs git
 (use-package magit
   :bind ("C-x g" . magit-status))
+
+
 
 ;; code templates
 (use-package yasnippet
@@ -112,12 +110,11 @@
   (add-hook 'C-mode-hook 'yas-minor-mode)
   (add-hook 'C++-mode-hook 'yas-minor-mode)
   (add-hook 'nxml-mode-hook 'yas-minor-mode))
-;;  (add-hook 'jdee-mode-hook 'yas-minor-mode)
+(use-package yasnippet-snippets
+  :config
+  (setq yas-wrap-around-region t))
 
-
-(use-package yasnippet-snippets)
-
-;; powerful multiple cursor operations instead of iedit
+;; powerful multiple cursors operations instead of iedit
 (use-package multiple-cursors
   :bind (("C->"           . mc/mark-next-like-this)
 	 ("C-<"           . mc/mark-previous-like-this)
@@ -136,10 +133,7 @@
 ;; (use-package neotree
 ;;   :bind ("<f9>" . neotree-toggle)
 ;;   :config
-;;   (setq neo-theme 'arrow))
-
-;;  :config
-;;  (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+;;   (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
 
 ;; tree icons
 ;;(use-package all-the-icons)
@@ -147,9 +141,6 @@
 ;;(use-package all-the-icons-dired
 ;;  :config
 ;;  (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
-
-
-
 
 ;; clojure mode for .clj source files
 (use-package clojure-mode
@@ -162,15 +153,7 @@
 ;; export html with colorful code block
 (use-package htmlize)
 
-
-
-;; (use-package jdee
-;;   :config
-;;   (setq jdee-jdk-registry
-;; 	'(("1.8.0_161" . "C:\\Program Files\\Java\\jdk1.8.0_161\\bin")))
-;;   (setq jdee-compiler (quote ("javac server"))))
-
-;; jump to any char's position quickly and conveniently
+;; jump to specified char conveniently
 (use-package avy
   :bind ("<f3>" . avy-goto-char))
 
@@ -183,7 +166,6 @@
 (use-package golden-ratio
   :bind ("<f12>" . golden-ratio))
 
-
 (use-package browse-kill-ring
   :bind ("M-y" . browse-kill-ring)
   :config
@@ -193,7 +175,45 @@
   (setq browse-kill-ring-highlight-inserted-item (quote solid))
   (setq browse-kill-ring-recenter nil)
   (setq browse-kill-ring-resize-window nil)
-  (setq browse-kill-ring-show-preview nil))
+  (setq browse-kill-ring-show-preview nil)
+  (setq browse-kill-ring-depropertize t)
+  (setq browse-kill-ring-maximum-display-length 80)
+  (setq browse-kill-ring-show-preview t)
+  (setq kill-ring-max 20))
+
+
+;; (use-package meghanada
+;;   :config
+;;   (add-hook 'java-mode-hook
+;;             (lambda ()
+;;               ;; meghanada-mode on
+;;               (meghanada-mode t)
+;;               (flycheck-mode +1)
+;;               (setq c-basic-offset 4)
+;;               ;; use code format
+;;               (add-hook 'before-save-hook 'meghanada-code-beautify-before-save))
+;; 	    (cond
+;; 	     ((eq system-type 'windows-nt)
+;; 	      (setq meghanada-java-path (expand-file-name "bin/java.exe" (getenv "JAVA_HOME")))
+;; 	      (setq meghanada-maven-path "mvn.cmd"))
+;; 	     (t
+;; 	      (setq meghanada-java-path "java")
+;; 	      (setq meghanada-maven-path "mvn")))))
+
+(use-package emmet-mode
+  :bind ("<tab>" . emmet-expand-line)
+  :config
+  (add-hook 'web-mode-hook 'emmet-mode))
+
+
+;; display a thread of light
+(use-package beacon
+  :config
+  (setq beacon-color "red")
+  (setq  beacon-blink-when-focused t))
+
+;; enhanced zap-char
+(use-package zzz-to-char)
 
 (setq hippie-expand-try-function-list '(try-expand-debbrev
                                         try-expand-debbrev-all-buffers
@@ -206,6 +226,9 @@
                                         try-complete-lisp-symbol-partially
                                         try-complete-lisp-symbol))
 (global-set-key (kbd "M-/") 'hippie-expand)
+
+;; use ibuffer to take the place of bufferList
+(global-set-key (kbd "C-x C-b") 'ibuffer)
 
 
 
@@ -225,7 +248,7 @@
 ;; turn off scroll bar
 (scroll-bar-mode -1)
 ;; turn off menu bar at the top
-;;(menu-bar-mode -1)
+(menu-bar-mode -1)
 ;; delete selected region when press any buttons instead of appending contents
 (delete-selection-mode t)
 ;; hightlight paired parentheses
@@ -256,6 +279,9 @@
 (global-set-key (kbd "M-s o") 'occur-dwim)
 
 
+
+
+
 ;; save desktop's layout when exiting emacs
 ;; (desktop-save-mode t)
 
@@ -268,17 +294,15 @@
 (setq dired-recursive-deletes 'always)
 
 
-
-
 ;; transparent background
-(set-frame-parameter (selected-frame) 'alpha '(85 . 50))
+;; (set-frame-parameter (selected-frame) 'alpha '(85 . 50))
 ;; no welcome buffer when opening emacs
 (setq inhibit-splash-screen t)
 ;; open this config file with F1
 (global-set-key (kbd "<f1>")
 		'(lambda ()
 		   (interactive)
-		   (find-file (concat emacs-home "\\init.el"))))
+		   (find-file (expand-file-name "init.el" emacs-home))))
 ;; disable backing up files
 (setq make-backup-files nil)
 ;; disable auto-save
@@ -314,18 +338,6 @@
 (global-set-key (kbd "<C-down>") 'windmove-down)
 (global-set-key (kbd "<C-left>") 'windmove-left)
 (global-set-key (kbd "<C-right>") 'windmove-right)
-;; save the current window layout
-(global-set-key (kbd "<f5>")
-		'(lambda ()
-		   (interactive)
-		   (window-configuration-to-register ?\~)
-		   (message "Saving window layout...done")))
-;; restore the window layout saved before
-(global-set-key (kbd "<f6>")
-		'(lambda ()
-		   (interactive)
-		   (jump-to-register ?\~)
-		   (message "Restoring window layout...done")))
 ;; cache accessed urls
 (setq url-automatic-caching t)
 ;; turn off error bell and blink
@@ -346,8 +358,6 @@
 ;; 		     char)
 ;;     (search-forward (string char) nil nil n))
 ;;   (setq unread-command-events (list last-input-event)))
-;; (define-key global-map (kbd "<f3>") 'wy-go-to-char)
-
 
 ;; quickly jump to specified line
 (global-set-key (kbd "<f2>") 'goto-line)
@@ -382,17 +392,30 @@
 		'(lambda ()
 		   (interactive)
 		   (jump-to-register ?\`)))
+;; save the current window layout
+(global-set-key (kbd "<f5>")
+		'(lambda ()
+		   (interactive)
+		   (window-configuration-to-register ?\~)
+		   (message "Saving window layout...done")))
+;; restore the window layout saved before
+(global-set-key (kbd "<f6>")
+		'(lambda ()
+		   (interactive)
+		   (jump-to-register ?\~)
+		   (message "Restoring window layout...done")))
+
 ;; config emails, need .authinfo
 (setq user-full-name "Lancelot Zealot")
 (setq user-mail-address "18879538430@163.com")
 (setq smtpmail-smtp-server "smtp.163.com")
 (setq smtpmail-smtp-service 25)
 (setq send-mail-function ''smtpmail-send-it)
-;; eww's default search engine
+;; set the default search engine of emacs's inner browser EWW
 (setq eww-search-prefix "https://www.bing.com/search?q=")
 
 
-;; move up and down a line or a region conveniently with  M-up and  M-down
+;; move up and down a line or a region conveniently with  M-up and  M-down just like Eclipse IDE
 (defun move-text-internal (arg)
   (cond
    ((and mark-active transient-mark-mode)
@@ -437,20 +460,18 @@
       [?\C-e return])
 (global-set-key (kbd "C-o") 'newline-at-any-point)
 
+;; mouse will move away when the cursor meets it.
+(mouse-avoidance-mode 'animate)
 
-(set-default-font "-outline-DejaVu Sans Mono-normal-normal-normal-mono-14-*-*-*-c-*-iso8859-1")
-
-;; not used temperarily
-;; (use-package yari)
-;; (use-package rinari
-;;   :config
-;;   (global-rinari-mode t))
+;; emacs can open pictures
+(auto-image-file-mode)
 
 
 ;; enlarge and shrink current window
 (global-set-key (kbd "C-{") 'shrink-window-horizontally)
 (global-set-key (kbd "C-}") 'enlarge-window-horizontally)
 (global-set-key (kbd "C-^") 'enlarge-window)
+
 
 ;; repeat most recently executed command.
 (global-set-key (kbd "<f9>") 'repeat)
@@ -519,13 +540,9 @@
 
 ;; define abbrev for specific major mode
 ;; the first part of the name should be the value of the variable major-mode of that mode
-;; e.g. for go-mode, name should be go-mode-abbrev-table
+;; e.g. for go-mode, name should be go-mconcat
 (define-abbrev-table 'go-mode-abbrev-table
   '(
-    ("g3" "package main
-import \"fmt\"
-func main() {
-        fmt.Println(\"3\")}")
     ("for" "for i := 0; i < 4; i++ { i }")
     ("if" "if x < 0 { 3 }")
     ("r" "return")
@@ -534,24 +551,39 @@ func main() {
     ("pt" "fmt.Println(3)")
     ("fu" "func(x int) int { return 1 }")
     ("v" "var = 3")))
-
 ;;(set-default 'abbrev-mode t)
-;; (global-set-key (kbd "<tab>") 'expand-abbrev)
+;;(global-set-key (kbd "<tab>") 'expand-abbrev)
 
-;; ;; org-mode configurations
-;; (global-set-key "\C-cl" 'org-store-link)
+(set-default-font "-outline-DejaVu Sans Mono-normal-normal-normal-mono-14-*-*-*-c-*-iso8859-1")
+
+
+;; not used temperarily
+;; (use-package yari)
+;; (use-package rinari
+;;   :config
+;;   (global-rinari-mode t))
+
+
+;; unused key bindings
+;; C-i is bound with TAB, so don't change this.
+;; C-m is bound with RET, so don't change this.
+
+
+
+;; org-mode configurations
+(global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cc" 'org-capture)
-;; (global-set-key "\C-cb" 'org-switchb)
+(global-set-key "\C-cb" 'org-switchb)
 
-(setq gtd-directory (concat emacs-home "\\GTD"))
+(setq gtd-directory (concat emacs-home "/GTD"))
 
-(setq org-default-notes-file (concat gtd-directory "\\inbox.org"))
+(setq org-default-notes-file (expand-file-name "inbox.org" gtd-directory))
 
-;; ;; ! triggers a timestamp when states are changed
-;; ;; @ triggers a note when states are changed
+;; ! triggers a timestamp when states are changed
+;; @ triggers a note when states are changed
 (setq org-todo-keywords
-      '((sequence "TODO(t!)" "PENDING(p!)" "|" "DONE(d!)" "CANCELED(c!/@)")))
+      '((sequence "TODO(t!)" "PENDING(p!)" "|" "DONE(d!)" "CANCELED(c@/!)")))
 (setq org-todo-keyword-faces
       '(("PENDING" . "orange")
  	("CANCELED" . "red")))
@@ -564,85 +596,46 @@ func main() {
 (setq org-agenda-custom-commands
       '(("o" "At the office" tags-todo "@office")
 	("h" "At home" tags-todo "@home")
-	("w" "On the way" tags-todo "@way")
-	("n" "Take the note" tags-todo "@note")))
+	("w" "On the way" tags-todo "@way")))
 
-(setq inbox-file (concat gtd-directory "\\inbox.org"))
-(setq notes-file (concat gtd-directory "\\notes.org"))
-(setq tasks-file (concat gtd-directory "\\tasks.org"))
-(setq someday-file (concat gtd-directory "\\someday.org"))
-(setq finished-file (concat gtd-directory "\\finished.org"))
-(setq canceled-file (concat gtd-directory "\\canceled.org"))
+(setq inbox-file (expand-file-name "inbox.org" gtd-directory))
+(setq notes-file (expand-file-name "notes.org" gtd-directory))
+(setq tasks-file (expand-file-name "tasks.org" gtd-directory))
+(setq someday-file (expand-file-name "someday.org" gtd-directory))
+(setq finished-file (expand-file-name "finished.org" gtd-directory))
+(setq canceled-file (expand-file-name "canceled.org" gtd-directory))
 
-(setq org-agenda-files '(inbox-file
-			 notes-file
-			 tasks-file
-			 someday-file
-			 finished-file
-			 canceled-file))
-
+;; I don't know why org-agenda-files must be a list of string literals here, variables cannot work.
+(setq org-agenda-files '("D:\\emacs\\.emacs.d\\GTD\\inbox.org"
+			 "D:\\emacs\\.emacs.d\\GTD\\tasks.org"
+			 "D:\\emacs\\.emacs.d\\GTD\\someday.org"
+			 "D:\\emacs\\.emacs.d\\GTD\\finished.org"
+			 "D:\\emacs\\.emacs.d\\GTD\\canceled.org"))
 
 
-;; TODO
 (setq org-capture-templates '(("t" "Todo [inbox]" entry
-                               (file+headline "~/.emacs.d/GTD/inbox.org" "Tasks")
-                               "* TODO %i%? %^g")
-                              ("T" "Tickler" entry
-                               (file+headline "~/.emacs.d/GTD/tickler.org" "Tickler")
-                               "* %i%? \n %U %^g")))
-(setq org-refile-targets '(("~/.emacs.d/GTD/gtd.org" :maxlevel . 3)
-                           ("~/.emacs.d/GTD/someday.org" :level . 1)
-                           ("~/.emacs.d/GTD/tickler.org" :maxlevel . 2)))
+                               (file+headline inbox-file "Inbox")
+                               "* TODO %i%? %T %^g" :empty-lines-before 1)
+                              ("n" "Notes" entry
+                               (file+headline notes-file "Notes")
+                               "* %i%? \n %T" :empty-lines-before 1 :prepend 1)))
+(setq org-refile-targets '((inbox-file :maxlevel . 2)
+                           (tasks-file :maxlevel . 2)
+                           (someday-file :maxlevel . 2)
+                           (finished-file :maxlevel . 2)
+                           (canceled-file :maxlevel . 2)))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-(setq org-directory "D:\\emacs\\.emacs.d\\GTD")
-(setq org-remember-templates '(
-			       ("Task" ?t "** TODO %? %t\n %i\n %a" "~/GTD/inbox.org" "Tasks")
-			       ("Book" ?c "** %? %t\n %i\n %a" "~/GTD/inbox.org" "Book")
-			       ("Calendar" ?c "** %? %t\n %i\n %a" "~/GTD/inbox.org" "Calender")
-			       ("Project" ?p "** %? %t\n %i\n %a" "~/GTD/inbox.org" "Project")))
-(setq org-default-notes-file (concat org-directory "/inbox.org"))
-
-
-
-;; ! triggers a timestamp when states are changed
-;; @ triggers a note when states are changed
-(setq org-todo-keywords
-      '((sequence "TODO(t!)" "PENDING(p!)" "|" "DONE(d!)" "CANCELED(c!)")
-	(sequence "REPORT" "BUG" "KNOWNCAUSE" "|" "FIXED")
-	(type "Fred" "Sara" "Lucy" "|" "DONE")))
-(setq org-todo-keyword-faces
-      '(("PENDING" . "orange")
-	("CANCELED" . "red")))
-;; Switch entry to DONE when all subentries are done, to TODO otherwise.
-(defun org-summary-todo (n-done n-not-done)
-  (let (org-log-done org-log-states)   ; turn off logging
-    (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
-(add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
-
-
-;; UNUSED key bindings
-;; C-i is bound with TAB, so don't change this.
-;; C-m is bound with RET, so don't change this.
-
-
-
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (zzz-to-char beacon solarized-theme eclipse-theme github-theme emmet-mode zoutline youdao-dictionary yasnippet-snippets web-mode use-package smartparens projectile neotree multiple-cursors meghanada magit js2-mode iedit hydra htmlize golden-ratio f expand-region dash-functional counsel cider browse-kill-ring all-the-icons-dired ahungry-theme ag ace-window))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
