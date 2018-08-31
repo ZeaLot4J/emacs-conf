@@ -7,6 +7,7 @@
 (setq package-archives	       
       '(("melpa-stable" . "http://stable.melpa.org/packages/")
 	("gnu" . "http://elpa.gnu.org/packages/")
+	("marmalade" . "https://marmalade-repo.org/packages/")
 	("gnu-cn" . "http://elpa.emacs-china.org/gnu/")
 	("melpa-cn" . "http://elpa.emacs-china.org/melpa/")))
 
@@ -45,7 +46,7 @@
 
 ;; display a list when searching strings
 (use-package swiper
-  :bind ("C-s" . swiper))
+  :bind ("<f2>" . swiper))
 
 ;; dependency of counsel and swiper
 ;; what's more, it makes switch-to-buffer display a list
@@ -109,7 +110,10 @@
   (add-hook 'js2-mode-hook 'yas-minor-mode)
   (add-hook 'C-mode-hook 'yas-minor-mode)
   (add-hook 'C++-mode-hook 'yas-minor-mode)
-  (add-hook 'nxml-mode-hook 'yas-minor-mode))
+  (add-hook 'nxml-mode-hook 'yas-minor-mode)
+  (add-hook 'java-mode-hook 'yas-minor-mode)
+  (add-hook 'emacs-lisp-mode-hook 'yas-minor-mode))
+
 (use-package yasnippet-snippets
   :config
   (setq yas-wrap-around-region t))
@@ -205,15 +209,47 @@
   :config
   (add-hook 'web-mode-hook 'emmet-mode))
 
-
-;; display a thread of light
+;; Highlight the cursor whenever the window scrolls
 (use-package beacon
   :config
+  (beacon-mode t)
   (setq beacon-color "red")
   (setq  beacon-blink-when-focused t))
 
 ;; enhanced zap-char
-(use-package zzz-to-char)
+(use-package zzz-to-char
+  :bind ("M-z" . zzz-to-char))
+
+(use-package nyan-mode
+  :config
+  (nyan-mode t))
+
+
+
+(spinner-start 'rotating-line)
+
+
+(use-package drag-stuff
+  :config
+  (drag-stuff-mode t)
+  (drag-stuff-define-keys))
+
+
+(use-package highlight-thing
+  :config
+  (add-hook 'ruby-mode-hook 'highlight-thing-mode)
+  (add-hook 'web-mode-hook 'highlight-thing-mode)
+  (add-hook 'js2-mode-hook 'highlight-thing-mode)
+  (add-hook 'C-mode-hook 'highlight-thing-mode)
+  (add-hook 'C++-mode-hook 'highlight-thing-mode)
+  (add-hook 'nxml-mode-hook 'highlight-thing-mode)
+  (add-hook 'java-mode-hook 'highlight-thing-mode)
+  (add-hook 'emacs-lisp-mode-hook 'highlight-thing-mode))
+
+
+
+(use-package typing)
+
 
 (setq hippie-expand-try-function-list '(try-expand-debbrev
                                         try-expand-debbrev-all-buffers
@@ -346,21 +382,6 @@
 ;; emacs's inner copying and cutting will be effective with OS's clipboard
 (setq select-enable-clipboard t)
 
-;; Deprecated
-;; search a char until it is found, just like Vim's command f
-;; (defun wy-go-to-char (n char)
-;;   "Move forward to Nth occurence of CHAR.
-;; Typing `wy-go-to-char-key' again will move forwad to the next Nth
-;; occurence of CHAR."
-;;   (interactive "p\ncGo to char: ")
-;;   (search-forward (string char) nil nil n)
-;;   (while (char-equal (read-char)
-;; 		     char)
-;;     (search-forward (string char) nil nil n))
-;;   (setq unread-command-events (list last-input-event)))
-
-;; quickly jump to specified line
-(global-set-key (kbd "<f2>") 'goto-line)
 ;; start defining a macro
 (global-set-key (kbd "<f7>") 'kmacro-start-macro-or-insert-counter)
 ;; end defining a macro or execute the current macro
@@ -415,41 +436,6 @@
 (setq eww-search-prefix "https://www.bing.com/search?q=")
 
 
-;; move up and down a line or a region conveniently with  M-up and  M-down just like Eclipse IDE
-(defun move-text-internal (arg)
-  (cond
-   ((and mark-active transient-mark-mode)
-    (if (> (point) (mark))
-	(exchange-point-and-mark))
-    (let ((column (current-column))
-	  (text (delete-and-extract-region (point) (mark))))
-      (forward-line arg)
-      (move-to-column column t)
-      (set-mark (point))
-      (insert text)
-      (exchange-point-and-mark)
-      (setq deactivate-mark nil)))
-   (t
-    (let ((column (current-column)))
-      (beginning-of-line)
-      (when (or (> arg 0) (not (bobp)))
-	(forward-line)
-	(when (or (< arg 0) (not (eobp)))
-	  (transpose-lines arg))
-	(forward-line -1))
-      (move-to-column column t)))))
-(defun move-text-down (arg)
-  "Move region (transient-mark-mode active) or current line
-  arg lines down."
-  (interactive "*p")
-  (move-text-internal arg))
-(defun move-text-up (arg)
-  "Move region (transient-mark-mode active) or current line
-  arg lines up."
-  (interactive "*p")
-  (move-text-internal (- arg)))
-(global-set-key (kbd "<M-down>") 'move-text-down)
-(global-set-key (kbd "<M-up>") 'move-text-up)
 
 ;; set a macro to copy the current word at the point
 (fset 'copy-word-at-point
@@ -630,9 +616,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(beacon-mode t)
  '(package-selected-packages
    (quote
-    (zzz-to-char beacon solarized-theme eclipse-theme github-theme emmet-mode zoutline youdao-dictionary yasnippet-snippets web-mode use-package smartparens projectile neotree multiple-cursors meghanada magit js2-mode iedit hydra htmlize golden-ratio f expand-region dash-functional counsel cider browse-kill-ring all-the-icons-dired ahungry-theme ag ace-window))))
+    (typing highlight-thing highlight-things drag-stuff spray-mode overcast-theme nyan-mode nyam-mode zzz-to-char beacon solarized-theme eclipse-theme github-theme emmet-mode zoutline youdao-dictionary yasnippet-snippets web-mode use-package smartparens projectile neotree multiple-cursors meghanada magit js2-mode iedit hydra htmlize golden-ratio f expand-region dash-functional counsel cider browse-kill-ring all-the-icons-dired ahungry-theme ag ace-window))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
