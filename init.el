@@ -7,6 +7,7 @@
 (setq package-archives	       
       '(("melpa-stable" . "http://stable.melpa.org/packages/")
 	("gnu" . "http://elpa.gnu.org/packages/")
+	("marmalade" . "https://marmalade-repo.org/packages/")
 	("gnu-cn" . "http://elpa.emacs-china.org/gnu/")
 	("melpa-cn" . "http://elpa.emacs-china.org/melpa/")))
 
@@ -28,7 +29,7 @@
 
 (if (display-graphic-p)
     (load-theme 'eclipse t)		;t means no load theme confirm
-  (load-theme 'tsdh-dark t))
+  (load-theme 'solarized-dark t))
 
 
 
@@ -53,7 +54,7 @@
 
 ;; display a list when searching strings
 (use-package swiper
-  :bind ("C-s" . swiper))
+  :bind ("<f2>" . swiper))
 
 ;; dependency of counsel and swiper
 ;; what's more, it makes switch-to-buffer display a list
@@ -118,7 +119,10 @@
   (add-hook 'js2-mode-hook 'yas-minor-mode)
   (add-hook 'C-mode-hook 'yas-minor-mode)
   (add-hook 'C++-mode-hook 'yas-minor-mode)
-  (add-hook 'nxml-mode-hook 'yas-minor-mode))
+  (add-hook 'nxml-mode-hook 'yas-minor-mode)
+  (add-hook 'java-mode-hook 'yas-minor-mode)
+  (add-hook 'emacs-lisp-mode-hook 'yas-minor-mode))
+
 (use-package yasnippet-snippets
   :config
   (setq yas-wrap-around-region t))
@@ -209,9 +213,112 @@
   (add-hook 'web-mode-hook 'emmet-mode)
   (define-key web-mode-map (kbd "<tab>") 'emmet-expand-line))
 
+;; display a thread of light
+(use-package beacon
+  :config
+  (beacon-mode t)
+  (setq beacon-color "red"))
 
-(use-package cheat-sh
-  :bind ("C-q" . cheat-sh))
+;; enhanced zap-char
+(use-package zzz-to-char
+  :bind ("M-z" . zzz-to-char))
+
+;; (use-package cheat-sh
+;;   :bind ("C-q" . cheat-sh-search))
+
+(use-package nyan-mode
+  :config
+  (nyan-mode t))
+
+(use-package drag-stuff
+  :config
+  (drag-stuff-global-mode t)
+  (drag-stuff-define-keys))
+
+(use-package highlight-thing
+  :config
+  (add-hook 'ruby-mode-hook 'highlight-thing-mode)
+  (add-hook 'web-mode-hook 'highlight-thing-mode)
+  (add-hook 'js2-mode-hook 'highlight-thing-mode)
+  (add-hook 'C-mode-hook 'highlight-thing-mode)
+  (add-hook 'C++-mode-hook 'highlight-thing-mode)
+  (add-hook 'nxml-mode-hook 'highlight-thing-mode)
+  (add-hook 'java-mode-hook 'highlight-thing-mode)
+  (add-hook 'emacs-lisp-mode-hook 'highlight-thing-mode))
+
+(use-package typing)
+
+(defhydra hydra-zoom (global-map "+")
+  "zoom"
+  ("g" text-scale-increase "in")
+  ("l" text-scale-decrease "out"))
+(defhydra hydra-buffer-menu (Buffer-menu-mode-map "." :color pink)
+  "
+^Mark^             ^Unmark^           ^Actions^          ^Search
+^^^^^^^^-----------------------------------------------------------------
+_m_: mark          _u_: unmark        _x_: execute       _R_: re-isearch
+_s_: save          _U_: unmark up     _b_: bury          _I_: isearch
+_d_: delete        ^ ^                _g_: refresh       _O_: multi-occur
+_D_: delete up     ^ ^                _T_: files only: % -28`Buffer-menu-files-only
+_~_: modified
+"
+  ("m" Buffer-menu-mark)
+  ("u" Buffer-menu-unmark)
+  ("U" Buffer-menu-backup-unmark)
+  ("d" Buffer-menu-delete)
+  ("D" Buffer-menu-delete-backwards)
+  ("s" Buffer-menu-save)
+  ("~" Buffer-menu-not-modified)
+  ("x" Buffer-menu-execute)
+  ("b" Buffer-menu-bury)
+  ("g" revert-buffer)
+  ("T" Buffer-menu-toggle-files-only)
+  ("O" Buffer-menu-multi-occur :color blue)
+  ("I" Buffer-menu-isearch-buffers :color blue)
+  ("R" Buffer-menu-isearch-buffers-regexp :color blue)
+  ("c" nil "cancel")
+  ("v" Buffer-menu-select "select" :color blue)
+  ("o" Buffer-menu-other-window "other-window" :color blue)
+  ("q" quit-window "quit" :color blue))
+
+;;(define-key Buffer-menu-mode-map "." 'hydra-buffer-menu/body)
+;; my awesome hydras!!
+(use-package hydra
+  :config
+  (global-set-key (kbd "C-t")
+		  (defhydra hydra-table (:color pink :hint nil)
+		    "
+^Ins/Del^			^Cell^		^Export^
+------------------------------------------------------------
+_i_: insert		_h_: heighten	_g_: generate source
+_r_: insert row		_s_: shorten
+_c_: insert column	_w_: widen
+_d_: delete row		_n_: narrow
+_D_: delete col		_j_: justify
+			
+   "
+		    ("i" table-insert)
+		    ("r" table-insert-row)
+		    ("c" table-insert-column)
+		    ("d" table-delete-row)
+		    ("D" table-delete-column)
+		    ("h" table-heighten-cell)
+		    ("s" table-shorten-cell)
+		    ("w" table-widen-cell)
+		    ("n" table-narrow-cell)
+		    ("j" table-justify)
+		    ("g" table-generate-source :color blue)
+		    ("q" nil "quit" :color blue))))
+
+
+
+
+
+
+;; fun things
+(spinner-start 'rotating-line)
+;;(zone-when-idle 30)
+
 
 (setq hippie-expand-try-function-list '(try-expand-debbrev
                                         try-expand-debbrev-all-buffers
@@ -346,21 +453,6 @@
 ;; emacs's inner copying and cutting will be effective with OS's clipboard
 (setq select-enable-clipboard t)
 
-;; Deprecated
-;; search a char until it is found, just like Vim's command f
-;; (defun wy-go-to-char (n char)
-;;   "Move forward to Nth occurence of CHAR.
-;; Typing `wy-go-to-char-key' again will move forwad to the next Nth
-;; occurence of CHAR."
-;;   (interactive "p\ncGo to char: ")
-;;   (search-forward (string char) nil nil n)
-;;   (while (char-equal (read-char)
-;; 		     char)
-;;     (search-forward (string char) nil nil n))
-;;   (setq unread-command-events (list last-input-event)))
-
-;; quickly jump to specified line
-(global-set-key (kbd "<f2>") 'goto-line)
 ;; start defining a macro
 (global-set-key (kbd "<f7>") 'kmacro-start-macro-or-insert-counter)
 ;; end defining a macro or execute the current macro
@@ -413,43 +505,6 @@
 (setq send-mail-function ''smtpmail-send-it)
 ;; set the default search engine of emacs's inner browser EWW
 (setq eww-search-prefix "https://www.bing.com/search?q=")
-
-
-;; move up and down a line or a region conveniently with  M-up and  M-down just like Eclipse IDE
-(defun move-text-internal (arg)
-  (cond
-   ((and mark-active transient-mark-mode)
-    (if (> (point) (mark))
-	(exchange-point-and-mark))
-    (let ((column (current-column))
-	  (text (delete-and-extract-region (point) (mark))))
-      (forward-line arg)
-      (move-to-column column t)
-      (set-mark (point))
-      (insert text)
-      (exchange-point-and-mark)
-      (setq deactivate-mark nil)))
-   (t
-    (let ((column (current-column)))
-      (beginning-of-line)
-      (when (or (> arg 0) (not (bobp)))
-	(forward-line)
-	(when (or (< arg 0) (not (eobp)))
-	  (transpose-lines arg))
-	(forward-line -1))
-      (move-to-column column t)))))
-(defun move-text-down (arg)
-  "Move region (transient-mark-mode active) or current line
-  arg lines down."
-  (interactive "*p")
-  (move-text-internal arg))
-(defun move-text-up (arg)
-  "Move region (transient-mark-mode active) or current line
-  arg lines up."
-  (interactive "*p")
-  (move-text-internal (- arg)))
-(global-set-key (kbd "<M-down>") 'move-text-down)
-(global-set-key (kbd "<M-up>") 'move-text-up)
 
 ;; set a macro to copy the current word at the point
 (fset 'copy-word-at-point
@@ -624,17 +679,3 @@
                            (canceled-file :maxlevel . 2)))
 
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (abyss-theme eclipse-theme zoutline zenburn-theme youdao-dictionary yasnippet-snippets web-mode use-package solarized-theme smartparens ruby-compilation projectile neotree multiple-cursors monokai-theme meghanada magit jump js2-mode iedit hydra htmlize golden-ratio github-theme expand-region emmet-mode dracula-theme counsel cider cheat-sh browse-kill-ring all-the-icons-dired ahungry-theme ag ace-window))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )

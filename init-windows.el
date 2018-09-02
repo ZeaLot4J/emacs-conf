@@ -207,7 +207,8 @@
 (use-package emmet-mode
   :bind ("<tab>" . emmet-expand-line)
   :config
-  (add-hook 'web-mode-hook 'emmet-mode))
+  (add-hook 'web-mode-hook 'emmet-mode)
+  (define-key web-mode-map (kbd "<tab>") 'emmet-expand-line))
 
 ;; Highlight the cursor whenever the window scrolls
 (use-package beacon

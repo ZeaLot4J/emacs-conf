@@ -26,3 +26,13 @@
      interface Spliterator is used for parallel stream operation.
 ** DONE learn Base64 API of Java8 and picture's Base64 <2018-08-26 日 11:57> :@home:
    - State "DONE"       from "TODO"       [2018-08-26 日 13:00]
+** DONE try best to grasp the knowledge of diff and merge in Emacs <2018-08-30 四 23:29> :@home:
+
+   - State "DONE"       from "TODO"       [2018-09-01 六 22:09]
+** DONE learn system monitor tools in linux terminal <2018-09-01 六 21:00> :@home:
+   - State "DONE"       from "TODO"       [2018-09-02 日 02:36]
+** DONE configure hydras in Emacs <2018-09-01 六 12:34>               :@home:
+
+   - State "DONE"       from "TODO"       [2018-09-02 日 15:09]
+   - Note taken on [2018-09-01 六 22:39] \\
+     we can try to configure Emacs' table with hydra as table related operations are too long to remember.

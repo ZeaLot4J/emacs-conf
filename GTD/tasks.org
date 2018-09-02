@@ -6,3 +6,6 @@
 #+CATEGORY: task
 ** TODO use state machine to resolve XML <2018-08-23 四 23:30>        :@home:
 ** TODO learn tree-way merge algorithm of git <2018-08-25 六 09:14>   :@home:
+** TODO finish reading Little Schemer <2018-08-27 一 01:34>           :@home:
+** TODO learn Shiro on Imooc <2018-08-19 日 20:52>                    :@home:
+
