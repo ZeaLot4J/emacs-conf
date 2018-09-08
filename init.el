@@ -23,12 +23,11 @@
 ;; solarized-dark
 ;; solarized-light
 ;; dracula
-;; eclipse
 ;; abyss
-(use-package eclipse-theme)
+(use-package dracula-theme)
 
 (if (display-graphic-p)
-    (load-theme 'eclipse t)		;t means no load theme confirm
+    (load-theme 'dracula t)		;t means no load theme confirm
   (load-theme 'solarized-dark t))
 
 
@@ -193,6 +192,7 @@
             (lambda ()
               ;; meghanada-mode on
               (meghanada-mode t)
+	      (setq meghanada-full-text-search-enable t)
               (flycheck-mode +1)
               (setq c-basic-offset 4)
               ;; use code format
@@ -248,44 +248,10 @@
 
 (use-package typing)
 
-(defhydra hydra-zoom (global-map "+")
-  "zoom"
-  ("g" text-scale-increase "in")
-  ("l" text-scale-decrease "out"))
-(defhydra hydra-buffer-menu (Buffer-menu-mode-map "." :color pink)
-  "
-^Mark^             ^Unmark^           ^Actions^          ^Search
-^^^^^^^^-----------------------------------------------------------------
-_m_: mark          _u_: unmark        _x_: execute       _R_: re-isearch
-_s_: save          _U_: unmark up     _b_: bury          _I_: isearch
-_d_: delete        ^ ^                _g_: refresh       _O_: multi-occur
-_D_: delete up     ^ ^                _T_: files only: % -28`Buffer-menu-files-only
-_~_: modified
-"
-  ("m" Buffer-menu-mark)
-  ("u" Buffer-menu-unmark)
-  ("U" Buffer-menu-backup-unmark)
-  ("d" Buffer-menu-delete)
-  ("D" Buffer-menu-delete-backwards)
-  ("s" Buffer-menu-save)
-  ("~" Buffer-menu-not-modified)
-  ("x" Buffer-menu-execute)
-  ("b" Buffer-menu-bury)
-  ("g" revert-buffer)
-  ("T" Buffer-menu-toggle-files-only)
-  ("O" Buffer-menu-multi-occur :color blue)
-  ("I" Buffer-menu-isearch-buffers :color blue)
-  ("R" Buffer-menu-isearch-buffers-regexp :color blue)
-  ("c" nil "cancel")
-  ("v" Buffer-menu-select "select" :color blue)
-  ("o" Buffer-menu-other-window "other-window" :color blue)
-  ("q" quit-window "quit" :color blue))
-
-;;(define-key Buffer-menu-mode-map "." 'hydra-buffer-menu/body)
 ;; my awesome hydras!!
 (use-package hydra
   :config
-  (global-set-key (kbd "C-t")
+  (global-set-key (kbd "M-t")
 		  (defhydra hydra-table (:color pink :hint nil)
 		    "
 ^Ins/Del^			^Cell^		^Export^
@@ -308,8 +274,30 @@ _D_: delete col		_j_: justify
 		    ("n" table-narrow-cell)
 		    ("j" table-justify)
 		    ("g" table-generate-source :color blue)
-		    ("q" nil "quit" :color blue))))
-
+		    ("q" nil "quit" :color blue)))
+  (define-key java-mode-map (kbd "M-m")
+    (defhydra hydra-meghanada (:color blue :hint nil)
+      "
+^Server^		^Compile^			^Run^			^Import^			^Debug^
+-------------------------------------------------------------------------------------------------------
+_s_: start	_c_: compile file	_	_e_: exec main		_i_: import		_d_: debug main
+_k_: kill		_C_: compile proj		_R_: run junit		_I_: import all		_D_: debug junit
+_r_: restart
+_K_: kill process
+"
+      ("s" meghanada-server-start)
+      ("k" meghanada-server-kill)
+      ("r" meghanada-server-restart)
+      ("c" meghanada-compile-file)
+      ("C" meghanada-compile-project)
+      ("e" meghanada-exec-main)
+      ("R" meghanada-run-junit-class)
+      ("i" meghanada-import-at-point)
+      ("I" meghanada-import-all)
+      ("d" meghanada-debug-main)
+      ("D" meghanada-debug-junit-class)
+      ("K" meghanada-kill-running-process)
+      ("q" nil "quit"))))
 
 
 
@@ -330,7 +318,7 @@ _D_: delete col		_j_: justify
                                         try-expand-line
                                         try-complete-lisp-symbol-partially
                                         try-complete-lisp-symbol))
-(global-set-key (kbd "M-/") 'hippie-expand)
+;;(global-set-key (kbd "M-/") 'hippie-expand)
 
 ;; use ibuffer to take the place of bufferList
 (global-set-key (kbd "C-x C-b") 'ibuffer)
@@ -532,79 +520,79 @@ _D_: delete col		_j_: justify
 (global-set-key (kbd "<f9>") 'repeat)
 
 ;;(load "D:\\emacs\\.emacs.d\\lisp\\my-abbrev")
-(clear-abbrev-table global-abbrev-table)
-(define-abbrev-table 'global-abbrev-table
-  '(
-    ;; my own frequently used abbrevs
-    ("thx" "thanks")
+;; (clear-abbrev-table global-abbrev-table)
+;; (define-abbrev-table 'global-abbrev-table
+;;   '(
+;;     ;; my own frequently used abbrevs
+;;     ("thx" "thanks")
 
-    ;; net abbrev
-    ("afaik" "as far as i know" )
-    ("atm" "at the moment" )
-    ("dfb" "difference between" )
-    ("ty" "thank you" )
-    ("ui" "user interface" )
-    ("uns" "understand" )
-    ("ur" "you are" )
-    ("btw" "by the way" )
-    ;; english word abbrev
-    ("ann" "announcement" )
-    ("arg" "argument" )
-    ("autom" "automatic" )
-    ("bc" "because" )
-    ("bg" "background" )
-    ("bt" "between" )
-    ("math" "mathematics" )
-    ;; computing
-    ("ahk" "AutoHotkey" )
-    ("cfg" "context-free grammar" )
-    ("cj" "Clojure" )
-    ("cs" "computer science" )
-    ;; tech company
-    ("gc" "Google Chrome" )
-    ("gm" "Google Map" )
-    ("macos" "Mac OS" )
-    ("msw" "Microsoft Windows" )
-    ;; programing
-    ("ev" "environment variable" )
-    ("ipa" "IP address" )
-    ("jvm" "Java Virtual Machine" )
-    ("rsi" "Repetitive Strain Injury" )
-    ("subdir" "sub-directory" )
-    ("wd" "web development" )
-    ("db" "database" )
-    ("gui3" "graphical user interface" )
-    ("oop3" "object oriented programing" )
-    ("os3" "operating system" )
-    ;; programing
-    ("eq" "==" )
-    ("r" "return" )
-    ("utf8" "-*- coding: utf-8 -*-" )
-    ;; regex
-    ("xaz" "\\([A-Za-z0-9]+\\)" )
-    ;; unicode
-    ("md" "—" )
-    ("hr" "--------------------------------------------------" )
-    ("bu" "•" )
-    ;; url
-    ("urlemacs" "http://ergoemacs.org/" )))
-(setq save-abbrevs nil)
+;;     ;; net abbrev
+;;     ("afaik" "as far as i know" )
+;;     ("atm" "at the moment" )
+;;     ("dfb" "difference between" )
+;;     ("ty" "thank you" )
+;;     ("ui" "user interface" )
+;;     ("uns" "understand" )
+;;     ("ur" "you are" )
+;;     ("btw" "by the way" )
+;;     ;; english word abbrev
+;;     ("ann" "announcement" )
+;;     ("arg" "argument" )
+;;     ("autom" "automatic" )
+;;     ("bc" "because" )
+;;     ("bg" "background" )
+;;     ("bt" "between" )
+;;     ("math" "mathematics" )
+;;     ;; computing
+;;     ("ahk" "AutoHotkey" )
+;;     ("cfg" "context-free grammar" )
+;;     ("cj" "Clojure" )
+;;     ("cs" "computer science" )
+;;     ;; tech company
+;;     ("gc" "Google Chrome" )
+;;     ("gm" "Google Map" )
+;;     ("macos" "Mac OS" )
+;;     ("msw" "Microsoft Windows" )
+;;     ;; programing
+;;     ("ev" "environment variable" )
+;;     ("ipa" "IP address" )
+;;     ("jvm" "Java Virtual Machine" )
+;;     ("rsi" "Repetitive Strain Injury" )
+;;     ("subdir" "sub-directory" )
+;;     ("wd" "web development" )
+;;     ("db" "database" )
+;;     ("gui3" "graphical user interface" )
+;;     ("oop3" "object oriented programing" )
+;;     ("os3" "operating system" )
+;;     ;; programing
+;;     ("eq" "==" )
+;;     ("r" "return" )
+;;     ("utf8" "-*- coding: utf-8 -*-" )
+;;     ;; regex
+;;     ("xaz" "\\([A-Za-z0-9]+\\)" )
+;;     ;; unicode
+;;     ("md" "—" )
+;;     ("hr" "--------------------------------------------------" )
+;;     ("bu" "•" )
+;;     ;; url
+;;     ("urlemacs" "http://ergoemacs.org/" )))
+;; (setq save-abbrevs nil)
 
-;; define abbrev for specific major mode
-;; the first part of the name should be the value of the variable major-mode of that mode
-;; e.g. for go-mode, name should be go-mconcat
-(define-abbrev-table 'go-mode-abbrev-table
-  '(
-    ("for" "for i := 0; i < 4; i++ { i }")
-    ("if" "if x < 0 { 3 }")
-    ("r" "return")
-    ("ps" "+")
-    ("eq" "==")
-    ("pt" "fmt.Println(3)")
-    ("fu" "func(x int) int { return 1 }")
-    ("v" "var = 3")))
-;;(set-default 'abbrev-mode t)
-;;(global-set-key (kbd "<tab>") 'expand-abbrev)
+;; ;; define abbrev for specific major mode
+;; ;; the first part of the name should be the value of the variable major-mode of that mode
+;; ;; e.g. for go-mode, name should be go-mconcat
+;; (define-abbrev-table 'go-mode-abbrev-table
+;;   '(
+;;     ("for" "for i := 0; i < 4; i++ { i }")
+;;     ("if" "if x < 0 { 3 }")
+;;     ("r" "return")
+;;     ("ps" "+")
+;;     ("eq" "==")
+;;     ("pt" "fmt.Println(3)")
+;;     ("fu" "func(x int) int { return 1 }")
+;;     ("v" "var = 3")))
+;; ;;(set-default 'abbrev-mode t)
+;; ;;(global-set-key (kbd "<tab>") 'expand-abbrev)
 
 
 
@@ -679,3 +667,17 @@ _D_: delete col		_j_: justify
                            (canceled-file :maxlevel . 2)))
 
 
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (highlight-thing zzz-to-char zoutline zenburn-theme youdao-dictionary yasnippet-snippets web-mode use-package typing solarized-theme smartparens ruby-compilation projectile nyan-mode neotree multiple-cursors monokai-theme meghanada magit jump js2-mode iedit hydra htmlize golden-ratio github-theme expand-region emmet-mode eclipse-theme drag-stuff dracula-theme counsel cider cheat-sh browse-kill-ring beacon all-the-icons-dired ahungry-theme ag ace-window abyss-theme))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

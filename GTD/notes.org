@@ -5,6 +5,86 @@
 * Notes
 #+CATEGORY Notes
 
+** list.toArray(T[])  is better than list.toArray()
+   #+BEGIN_SRC java
+    List<String[]> ls = new ArrayList<>();
+    String[] str1 = new String[] {"abc", "def", "ghi"};
+    String[] str2 = new String[] {"aaa", "bbb", "ccc"};
+    ls.add(str1);
+    ls.add(str2);
+    String[][] strss = ls.toArray(new String[0][0]);
+    System.out.println(Arrays.deepToString(strss));
+   #+END_SRC
+   <2018-09-06 四 23:41>
+** Elegantly use varargs method 
+   #+BEGIN_SRC java
+  // elegant method, use two arguments
+  public static int min(int first, int... args) {
+    int min = first;
+    for (int arg : args) if (arg < min) min = arg;
+    return min;
+  }
+   #+END_SRC
+   <2018-09-05 三 08:37>
+** what is static dispatcher and dynamic dispatcher in Java?
+   method overloading is static dispatcher
+   method overriding is dynamic dispatcher
+   #+BEGIN_SRC java
+public class Horse {
+  public void eat() {
+    System.out.println("horse eat");
+  }
+
+  public static void main(String[] args) {
+    Mozi m = new Mozi();
+    WhiteHorse h1 = new WhiteHorse();
+    Horse h2 = new BlackHorse();
+    m.ride(h1);
+    m.ride(h2);
+    h2.eat();
+  }
+}
+
+class WhiteHorse extends Horse {
+  public void eat() {
+    System.out.println("white horse eat");
+  }
+}
+
+class BlackHorse extends Horse {
+  public void eat() {
+    System.out.println("black horse eat");
+  }
+}
+
+class Mozi {
+  public void ride(Horse horse) {
+    System.out.println("ride a horse");
+  }
+
+  public void ride(WhiteHorse horse) {
+    System.out.println("ride a white horse");
+  }
+
+  public void ride(BlackHorse horse) {
+    System.out.println("ride a black horse");
+  }
+}
+
+   #+END_SRC
+   <2018-09-03 一 19:15>
+** Don't use clone 
+   problems will arise if subclass overrides clone method.
+  <2018-09-03 一 13:49>
+** bit field is useful sometimes
+   text.applyStyles(BOLD | ITALIC | UNDERSCORE)
+    // 0000001 BOLD
+    // 0000010 ITALIC
+    // 0000100 UNDRELINE
+    // BOLD | ITALIC  		000011	3
+    // BOLD | UNDERLINE 	000101	5
+    // ITALIC | UNDERLINE	000110  6
+  <2018-09-03 一 11:00>
 ** list services and start or stop service in Linux                   :linux:
    chkconfig
    systemctl

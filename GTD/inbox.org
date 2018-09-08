@@ -5,5 +5,4 @@
 * Inbox
 #+CATEGORY: inbox
 
-** TODO be more seasoned about Annotation of Java <2018-09-01 六 17:17> :@home:
-
+** TODO read <<java8 in action>>  <2018-09-07 五 22:06>               :@home:

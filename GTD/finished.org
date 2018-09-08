@@ -36,3 +36,5 @@
    - State "DONE"       from "TODO"       [2018-09-02 日 15:09]
    - Note taken on [2018-09-01 六 22:39] \\
      we can try to configure Emacs' table with hydra as table related operations are too long to remember.
+** DONE finish reading Little Schemer <2018-08-27 一 01:34>           :@home:
+   - State "DONE"       from "TODO"       [2018-09-03 一 00:05]
