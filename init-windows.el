@@ -17,10 +17,10 @@
 ;; ensure packages that are not installed yet will be installed automatically
 (setq use-package-always-ensure t)
 
-(use-package solarized-theme)
+(use-package ahungry-theme)
 
 (if (display-graphic-p)
-    (load-theme 'solarized-dark t) 		;t means no load theme confirm
+    (load-theme 'ahungry t) 		;t means no load theme confirm
   (load-theme 'tsdh-dark t))
 
 
@@ -205,7 +205,6 @@
 ;; 	      (setq meghanada-maven-path "mvn")))))
 
 (use-package emmet-mode
-  :bind ("<tab>" . emmet-expand-line)
   :config
   (add-hook 'web-mode-hook 'emmet-mode)
   (define-key web-mode-map (kbd "<tab>") 'emmet-expand-line))
@@ -232,7 +231,7 @@
 
 (use-package drag-stuff
   :config
-  (drag-stuff-mode t)
+  (drag-stuff-global-mode t)
   (drag-stuff-define-keys))
 
 
@@ -251,6 +250,35 @@
 
 (use-package typing)
 
+(use-package rsense)
+;; my awesome hydras!!
+(use-package hydra
+  :config
+  (global-set-key (kbd "C-t")
+		  (defhydra hydra-table (:color pink :hint nil)
+		    "
+^Ins/Del^			^Cell^		^Export^
+------------------------------------------------------------
+_i_: insert		_h_: heighten	_g_: generate source
+_r_: insert row		_s_: shorten
+_c_: insert column	_w_: widen
+_d_: delete row		_n_: narrow
+_D_: delete col		_j_: justify
+			
+   "
+		    ("i" table-insert)
+		    ("r" table-insert-row)
+		    ("c" table-insert-column)
+		    ("d" table-delete-row)
+		    ("D" table-delete-column)
+		    ("h" table-heighten-cell)
+		    ("s" table-shorten-cell)
+		    ("w" table-widen-cell)
+		    ("n" table-narrow-cell)
+		    ("j" table-justify)
+		    ("g" table-generate-source :color blue)
+		    ("q" nil "quit" :color blue))))
+
 
 (setq hippie-expand-try-function-list '(try-expand-debbrev
                                         try-expand-debbrev-all-buffers
@@ -262,7 +290,7 @@
                                         try-expand-line
                                         try-complete-lisp-symbol-partially
                                         try-complete-lisp-symbol))
-(global-set-key (kbd "M-/") 'hippie-expand)
+;;(global-set-key (kbd "M-/") 'hippie-expand)
 
 ;; use ibuffer to take the place of bufferList
 (global-set-key (kbd "C-x C-b") 'ibuffer)
@@ -332,7 +360,7 @@
 
 
 ;; transparent background
-;; (set-frame-parameter (selected-frame) 'alpha '(85 . 50))
+(set-frame-parameter (selected-frame) 'alpha '(85 . 50))
 ;; no welcome buffer when opening emacs
 (setq inhibit-splash-screen t)
 ;; open this config file with F1
@@ -617,10 +645,9 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(beacon-mode t)
  '(package-selected-packages
    (quote
-    (typing highlight-thing highlight-things drag-stuff spray-mode overcast-theme nyan-mode nyam-mode zzz-to-char beacon solarized-theme eclipse-theme github-theme emmet-mode zoutline youdao-dictionary yasnippet-snippets web-mode use-package smartparens projectile neotree multiple-cursors meghanada magit js2-mode iedit hydra htmlize golden-ratio f expand-region dash-functional counsel cider browse-kill-ring all-the-icons-dired ahungry-theme ag ace-window))))
+    (rsense zzz-to-char zoutline zeno-theme youdao-dictionary yasnippet-snippets web-mode use-package typing solarized-theme smartparens scala-mode sbt-mode projectile overcast-theme nyan-mode neotree multiple-cursors meghanada magit js2-mode iedit hydra htmlize highlight-thing golden-ratio github-theme f expand-region emmet-mode eclipse-theme drag-stuff dash-functional counsel cider browse-kill-ring beacon all-the-icons-dired ahungry-theme ag ace-window))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
