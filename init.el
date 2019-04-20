@@ -48,8 +48,12 @@
 	 ("C-h f" . counsel-describe-function)
 	 ("C-h v" . counsel-describe-variable)
 	 ("C-x C-l" . counsel-locate)
-	 ("M-s i" . counsel-imenu)))
+	 ("M-s i" . counsel-imenu)
+	 ("C-c o" . counsel-find-file-extern)))
 
+(use-package counsel-projectile
+  :bind (("C-c f". counsel-projectile-find-file)
+   ("C-c s". counsel-projectile-ag)))
 
 ;; display a list when searching strings
 (use-package swiper
@@ -246,7 +250,20 @@
   (add-hook 'java-mode-hook 'highlight-thing-mode)
   (add-hook 'emacs-lisp-mode-hook 'highlight-thing-mode))
 
+(use-package ag
+  :config
+  (setq ag-highlight-search t)
+  (setq ag-reuse-window t)
+  (setq ag-reuse-buffers t))
+
 (use-package typing)
+
+;;(use-package rsense)
+;;(use-package inf-ruby)
+;;(use-package ruby-electric)
+;;(use-package seeing-is-believing)
+
+(use-package undo-tree)
 
 ;; my awesome hydras!!
 (use-package hydra
@@ -319,12 +336,13 @@ _K_: kill process
                                         try-complete-lisp-symbol-partially
                                         try-complete-lisp-symbol))
 ;;(global-set-key (kbd "M-/") 'hippie-expand)
+(global-set-key (kbd "M-RET") 'hippie-expand)
 
 ;; use ibuffer to take the place of bufferList
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
 
-
+(server-start)
 
 
 ;; list recently open files with C-x C-r
@@ -398,6 +416,10 @@ _K_: kill process
 		'(lambda ()
 		   (interactive)
 		   (find-file (expand-file-name "init.el" emacs-home))))
+(defun init ()
+  (interactive)
+  (find-file (expand-file-name "init.el" emacs-home)))
+
 ;; disable backing up files
 (setq make-backup-files nil)
 ;; disable auto-save
