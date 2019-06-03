@@ -5,31 +5,29 @@
 ;; emacs package sources
 (package-initialize)
 (setq package-archives	       
-      '(("melpa-stable" . "http://stable.melpa.org/packages/")
+      '(
+	("melpa-stable" . "http://stable.melpa.org/packages/")
 	("gnu" . "http://elpa.gnu.org/packages/")
 	("marmalade" . "https://marmalade-repo.org/packages/")
 	("gnu-cn" . "http://elpa.emacs-china.org/gnu/")
-	("melpa-cn" . "http://elpa.emacs-china.org/melpa/")))
+	("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
+	))
 
 ;; emacs config home directory
-(setq emacs-home "~/.emacs.d")
+(setq emacs-home "D:\\emacs-25.3_1-x86_64\\.emacs.d")
 
 ;; ensure packages that are not installed yet will be installed automatically
 (setq use-package-always-ensure t)
 
-;; my favorite themes:
-;; ahungry
-;; github
-;; solarized-dark
-;; solarized-light
-;; dracula
-;; abyss
-(use-package dracula-theme)
-
+;;(use-package ahungry-theme)
+;;(use-package dracula-theme)
+;;(use-package abyss-theme)
+;;(use-package monokai-theme)
+;;(use-package gotham-theme)
+;;(use-package solarized-theme)
 (if (display-graphic-p)
-    (load-theme 'dracula t)		;t means no load theme confirm
-  (load-theme 'solarized-dark t))
-
+    (load-theme 'solarized-light t) 		;t means no load theme confirm
+  (load-theme 'tsdh-dark t))
 
 
 ;; turn off cursor's blink
@@ -47,14 +45,12 @@
 	 ("M-x" . counsel-M-x)
 	 ("C-h f" . counsel-describe-function)
 	 ("C-h v" . counsel-describe-variable)
-	 ("C-x C-l" . counsel-locate)
 	 ("M-s i" . counsel-imenu)
-	 ("C-c o" . counsel-find-file-extern)))
+	 ("C-c o" . counsel-find-file-extern))) ;open the container directory
 
 (use-package counsel-projectile
   :bind (("C-c f". counsel-projectile-find-file)
-   ("C-c s". counsel-projectile-ag)))
-
+	 ("C-c s". counsel-projectile-ag)))
 ;; display a list when searching strings
 (use-package swiper
   :bind ("<f2>" . swiper))
@@ -66,11 +62,6 @@
   (ivy-mode 1)
   (setq ivy-use-virtual-buffers t))
 
-(use-package ag
-  :config
-  (setq ag-highlight-search t))
-
-;; smooth scrolling
 (setq scroll-margin 3
       scroll-conservatively 10000)
 
@@ -118,7 +109,7 @@
 (use-package yasnippet
   :config
   (add-hook 'ruby-mode-hook 'yas-minor-mode)
-  ;;  (add-hook 'web-mode-hook 'yas-minor-mode)
+  (add-hook 'web-mode-hook 'yas-minor-mode)
   (add-hook 'js2-mode-hook 'yas-minor-mode)
   (add-hook 'C-mode-hook 'yas-minor-mode)
   (add-hook 'C++-mode-hook 'yas-minor-mode)
@@ -143,20 +134,22 @@
 ;; project manager
 (use-package projectile
   :config
+  ;;  (projectile-global-mode)
   (setq projectile-completion-system 'default))
 
 ;; directory tree
 ;; (use-package neotree
 ;;   :bind ("<f9>" . neotree-toggle)
 ;;   :config
-(setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+;;   (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
 
 ;; tree icons
-(use-package all-the-icons)
+;;(use-package all-the-icons)
 ;; dired mode icons
-(use-package all-the-icons-dired
-  :config
-  (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
+;;(use-package all-the-icons-dired
+;;  :config
+;;  (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
+
 ;; clojure mode for .clj source files
 (use-package clojure-mode
   :config
@@ -177,6 +170,10 @@
   :config
   (ace-window-display-mode t))
 
+;; split windows with golden ratio
+(use-package golden-ratio
+  :bind ("<f12>" . golden-ratio))
+
 (use-package browse-kill-ring
   :bind ("M-y" . browse-kill-ring)
   :config
@@ -186,59 +183,99 @@
   (setq browse-kill-ring-highlight-inserted-item (quote solid))
   (setq browse-kill-ring-recenter nil)
   (setq browse-kill-ring-resize-window nil)
+  (setq browse-kill-ring-show-preview nil)
+  (setq browse-kill-ring-depropertize t)
+  (setq browse-kill-ring-maximum-display-length 80)
   (setq browse-kill-ring-show-preview t)
-  (setq browse-kill-ring-maximum-display-length 60)
   (setq kill-ring-max 20))
 
-(use-package meghanada
-  :config
-  (add-hook 'java-mode-hook
-            (lambda ()
-              ;; meghanada-mode on
-              (meghanada-mode t)
-	      (setq meghanada-full-text-search-enable t)
-              (flycheck-mode +1)
-              (setq c-basic-offset 4)
-              ;; use code format
-              (add-hook 'before-save-hook 'meghanada-code-beautify-before-save))
-	    (cond
-	     ((eq system-type 'windows-nt)
-	      (setq meghanada-java-path (expand-file-name "bin/java.exe" (getenv "JAVA_HOME")))
-	      (setq meghanada-maven-path "mvn.cmd"))
-	     (t
-	      (setq meghanada-java-path "java")
-	      (setq meghanada-maven-path "mvn")))))
-
-(use-package golden-ratio
-  :bind ("<f12>" . golden-ratio))
+;; java IDE configuration
+;; (use-package meghanada
+;;   :config
+;;   (add-hook 'java-mode-hook
+;;             (lambda ()
+;;               ;; meghanada-mode on
+;;               (meghanada-mode t)
+;;               (flycheck-mode +1)
+;;               (setq c-basic-offset 4)
+;;               ;; use code format
+;;               (add-hook 'before-save-hook 'meghanada-code-beautify-before-save))
+;; 	    (cond
+;; 	     ((eq system-type 'windows-nt)
+;; 	      (setq meghanada-java-path (expand-file-name "bin/java.exe" (getenv "JAVA_HOME")))
+;; 	      (setq meghanada-maven-path "mvn.cmd"))
+;; 	     (t
+;; 	      (setq meghanada-java-path "java")
+;; 	      (setq meghanada-maven-path "mvn")))))
 
 (use-package emmet-mode
   :config
   (add-hook 'web-mode-hook 'emmet-mode)
   (define-key web-mode-map (kbd "<tab>") 'emmet-expand-line))
 
-;; display a thread of light
+;; Highlight the cursor line whenever the window scrolls
 (use-package beacon
   :config
   (beacon-mode t)
-  (setq beacon-color "red"))
+  (setq beacon-color "red")
+  (setq  beacon-blink-when-focused t))
 
 ;; enhanced zap-char
 (use-package zzz-to-char
   :bind ("M-z" . zzz-to-char))
 
-;; (use-package cheat-sh
-;;   :bind ("C-q" . cheat-sh-search))
-
+;; the rainbow cat on the bottom
 (use-package nyan-mode
   :config
   (nyan-mode t))
+;; let parrot rotating the specified set of words
+(use-package parrot
+  :config
+  (parrot-mode t)
+  :bind ("M-n" . parrot-rotate-next-word-at-point))
+;;   ("begin" "end")
+;;   ("enable" "disable")
+;;   ("enter" "exit")
+;;   ("forward" "backward")
+;;   ("front" "rear" "back")
+;;   ("get" "set")
+;;   ("high" "low")
+;;   ("in" "out")
+;;   ("left" "right")
+;;   ("min" "max")
+;;   ("on" "off")
+;;   ("prev" "next"))
+;;   ("start" "stop")
+;;   ("true" "false")
+;;   ("&&" "||"))
+;;   ("==" "!="))
+;;   ("." "->"))
+;;   ("if" "else" "elif"))
+;;   ("ifdef" "ifndef"))
+;;   ("int8_t" "int16_t" "int32_t" "int64_t"))
+;;   ("uint8_t" "uint16_t" "uint32_t" "uint64_t"))
+;;   ("1" "2" "3" "4" "5" "6" "7" "8" "9" "10"))
+;;   ("1st" "2nd" "3rd" "4th" "5th" "6th" "7th" "8th" "9th" "10th")))
 
+;; preview goto-line function, very convenient!
+(use-package goto-line-preview
+  :config
+  (global-set-key [remap goto-line] 'goto-line-preview))
+(use-package powerline)
+
+(global-set-key (kbd "<f3>") 'hs-toggle-hiding)
+;; rotating slash on the bottom, / - \ 
+(spinner-start 'rotating-line)
+;; characters begin flying when idle
+(setq zone-when-idle 5)
+
+;; M-up down to move lines, M-left right to move words
 (use-package drag-stuff
   :config
   (drag-stuff-global-mode t)
   (drag-stuff-define-keys))
 
+;; highlight current same words
 (use-package highlight-thing
   :config
   (add-hook 'ruby-mode-hook 'highlight-thing-mode)
@@ -250,25 +287,38 @@
   (add-hook 'java-mode-hook 'highlight-thing-mode)
   (add-hook 'emacs-lisp-mode-hook 'highlight-thing-mode))
 
+
 (use-package ag
   :config
   (setq ag-highlight-search t)
   (setq ag-reuse-window t)
   (setq ag-reuse-buffers t))
 
+;; typing game
 (use-package typing)
 
-;;(use-package rsense)
-;;(use-package inf-ruby)
-;;(use-package ruby-electric)
+;; ruby check
+(use-package rsense)
+(use-package inf-ruby
+  :bind ("C-x C-l" . ruby-send-line))
+(use-package ruby-electric
+  :config
+  (add-hook 'ruby-mode-hook 'ruby-electric-mode))
 ;;(use-package seeing-is-believing)
 
-(use-package undo-tree)
+;; very opinionated, key-chord will cause many key conflictions
+(use-package key-chord
+   :config
+   (key-chord-mode 1)
+   (key-chord-define-global ";;" 'avy-goto-char))
 
-;; my awesome hydras!!
+(use-package spray)
+
+(use-package undo-tree)
+;; my awesome hydras for quickly generating a data table
 (use-package hydra
   :config
-  (global-set-key (kbd "M-t")
+  (global-set-key (kbd "C-t")
 		  (defhydra hydra-table (:color pink :hint nil)
 		    "
 ^Ins/Del^			^Cell^		^Export^
@@ -291,58 +341,29 @@ _D_: delete col		_j_: justify
 		    ("n" table-narrow-cell)
 		    ("j" table-justify)
 		    ("g" table-generate-source :color blue)
-		    ("q" nil "quit" :color blue)))
-  (define-key java-mode-map (kbd "M-m")
-    (defhydra hydra-meghanada (:color blue :hint nil)
-      "
-^Server^		^Compile^			^Run^			^Import^			^Debug^
--------------------------------------------------------------------------------------------------------
-_s_: start	_c_: compile file	_	_e_: exec main		_i_: import		_d_: debug main
-_k_: kill		_C_: compile proj		_R_: run junit		_I_: import all		_D_: debug junit
-_r_: restart
-_K_: kill process
-"
-      ("s" meghanada-server-start)
-      ("k" meghanada-server-kill)
-      ("r" meghanada-server-restart)
-      ("c" meghanada-compile-file)
-      ("C" meghanada-compile-project)
-      ("e" meghanada-exec-main)
-      ("R" meghanada-run-junit-class)
-      ("i" meghanada-import-at-point)
-      ("I" meghanada-import-all)
-      ("d" meghanada-debug-main)
-      ("D" meghanada-debug-junit-class)
-      ("K" meghanada-kill-running-process)
-      ("q" nil "quit"))))
+		    ("q" nil "quit" :color blue))))
 
 
+(server-start)
 
-
-
-;; fun things
-(spinner-start 'rotating-line)
-;;(zone-when-idle 30)
-
-
-(setq hippie-expand-try-function-list '(try-expand-debbrev
-                                        try-expand-debbrev-all-buffers
-                                        try-expand-debbrev-from-kill
-                                        try-complete-file-name-partially
-                                        try-complete-file-name
-                                        try-expand-all-abbrevs
-                                        try-expand-list
-                                        try-expand-line
-                                        try-complete-lisp-symbol-partially
-                                        try-complete-lisp-symbol))
-;;(global-set-key (kbd "M-/") 'hippie-expand)
+;; words complete
+(setq hippie-expand-try-functions-list '(try-expand-dabbrev
+					 try-expand-dabbrev-visible
+					 try-expand-dabbrev-all-buffers
+					 try-complete-file-name-partially
+					 try-complete-file-name
+					 ;; try-expand-dabbrev-from-kill
+					 ;; try-expand-all-abbrevs
+					 ;; try-expand-list
+					 ;; try-complete-lisp-symbol-partially
+					 ;; try-complete-lisp-symbol
+					 ;; try-expand-line
+					 ))
 (global-set-key (kbd "M-RET") 'hippie-expand)
 
 ;; use ibuffer to take the place of bufferList
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
-
-(server-start)
 
 
 ;; list recently open files with C-x C-r
@@ -411,15 +432,22 @@ _K_: kill process
 ;;(set-frame-parameter (selected-frame) 'alpha '(85 . 50))
 ;; no welcome buffer when opening emacs
 (setq inhibit-splash-screen t)
+
+
+
 ;; open this config file with F1
+;; (global-set-key (kbd "<f1>")
+;; 		'(lambda ()
+;; 		   (interactive)
+;; 		   (find-file (expand-file-name "init.el" emacs-home))))
+
 (global-set-key (kbd "<f1>")
-		'(lambda ()
-		   (interactive)
-		   (find-file (expand-file-name "init.el" emacs-home))))
+		'init)
+
+;; open config file
 (defun init ()
   (interactive)
   (find-file (expand-file-name "init.el" emacs-home)))
-
 ;; disable backing up files
 (setq make-backup-files nil)
 ;; disable auto-save
@@ -427,7 +455,7 @@ _K_: kill process
 ;; open emacs full screen
 ;; (setq initial-frame-alist (quote ((fullscreen . maximized))))
 
-;; locate the files of functions, variables and key-bindings
+;; locate the files of lisp functions, variables and key-bindings
 (global-set-key "\C-h\ \C-f" 'find-function)
 (global-set-key "\C-h\ \C-v" 'find-variable)
 (global-set-key "\C-h\ \C-k" 'find-function-on-key)
@@ -446,6 +474,7 @@ _K_: kill process
 				(indent-buffer)
 				(message "Indenting buffer...done")))))
 (global-set-key (kbd "C-M-\\") 'indent-region-or-buffer)
+
 ;; replace yes or no with y or n
 (fset 'yes-or-no-p 'y-or-n-p)
 ;; enable code hightlight in org mode
@@ -507,7 +536,7 @@ _K_: kill process
 		   (jump-to-register ?\~)
 		   (message "Restoring window layout...done")))
 
-;; config emails, need .authinfo
+;; config emails, need .authinfo file in the emacs-home
 (setq user-full-name "Lancelot Zealot")
 (setq user-mail-address "18879538430@163.com")
 (setq smtpmail-smtp-server "smtp.163.com")
@@ -515,6 +544,7 @@ _K_: kill process
 (setq send-mail-function ''smtpmail-send-it)
 ;; set the default search engine of emacs's inner browser EWW
 (setq eww-search-prefix "https://www.bing.com/search?q=")
+
 
 ;; set a macro to copy the current word at the point
 (fset 'copy-word-at-point
@@ -525,8 +555,8 @@ _K_: kill process
       [?\C-e return])
 (global-set-key (kbd "C-o") 'newline-at-any-point)
 
-;; mouse will move away when the cursor meets it.
-(mouse-avoidance-mode 'animate)
+;; mouse will move away when encountering cursor.
+;; (mouse-avoidance-mode 'animate)
 
 ;; emacs can open pictures
 (auto-image-file-mode)
@@ -542,80 +572,87 @@ _K_: kill process
 (global-set-key (kbd "<f9>") 'repeat)
 
 ;;(load "D:\\emacs\\.emacs.d\\lisp\\my-abbrev")
-;; (clear-abbrev-table global-abbrev-table)
-;; (define-abbrev-table 'global-abbrev-table
-;;   '(
-;;     ;; my own frequently used abbrevs
-;;     ("thx" "thanks")
+(clear-abbrev-table global-abbrev-table)
+(define-abbrev-table 'global-abbrev-table
+  '(
+    ;; my own frequently used abbrevs
+    ("thx" "thanks")
 
-;;     ;; net abbrev
-;;     ("afaik" "as far as i know" )
-;;     ("atm" "at the moment" )
-;;     ("dfb" "difference between" )
-;;     ("ty" "thank you" )
-;;     ("ui" "user interface" )
-;;     ("uns" "understand" )
-;;     ("ur" "you are" )
-;;     ("btw" "by the way" )
-;;     ;; english word abbrev
-;;     ("ann" "announcement" )
-;;     ("arg" "argument" )
-;;     ("autom" "automatic" )
-;;     ("bc" "because" )
-;;     ("bg" "background" )
-;;     ("bt" "between" )
-;;     ("math" "mathematics" )
-;;     ;; computing
-;;     ("ahk" "AutoHotkey" )
-;;     ("cfg" "context-free grammar" )
-;;     ("cj" "Clojure" )
-;;     ("cs" "computer science" )
-;;     ;; tech company
-;;     ("gc" "Google Chrome" )
-;;     ("gm" "Google Map" )
-;;     ("macos" "Mac OS" )
-;;     ("msw" "Microsoft Windows" )
-;;     ;; programing
-;;     ("ev" "environment variable" )
-;;     ("ipa" "IP address" )
-;;     ("jvm" "Java Virtual Machine" )
-;;     ("rsi" "Repetitive Strain Injury" )
-;;     ("subdir" "sub-directory" )
-;;     ("wd" "web development" )
-;;     ("db" "database" )
-;;     ("gui3" "graphical user interface" )
-;;     ("oop3" "object oriented programing" )
-;;     ("os3" "operating system" )
-;;     ;; programing
-;;     ("eq" "==" )
-;;     ("r" "return" )
-;;     ("utf8" "-*- coding: utf-8 -*-" )
-;;     ;; regex
-;;     ("xaz" "\\([A-Za-z0-9]+\\)" )
-;;     ;; unicode
-;;     ("md" "—" )
-;;     ("hr" "--------------------------------------------------" )
-;;     ("bu" "•" )
-;;     ;; url
-;;     ("urlemacs" "http://ergoemacs.org/" )))
-;; (setq save-abbrevs nil)
+    ;; net abbrev
+    ("imao" "in my arrogant opinion")
+    ("afaik" "as far as i know" )
+    ("atm" "at the moment" )
+    ("dfb" "difference between" )
+    ("ty" "thank you" )
+    ("ui" "user interface" )
+    ("uns" "understand" )
+    ("ur" "you are" )
+    ("btw" "by the way" )
+    ("cnt" "can't" )
+    ("ddnt" "didn't" )
+    ("dnt" "don't" )
+    ;; english word abbrev
+    ("ann" "announcement" )
+    ("arg" "argument" )
+    ("autom" "automatic" )
+    ("bc" "because" )
+    ("bg" "background" )
+    ("bt" "between" )
+    ("math" "mathematics" )
+    ;; computing
+    ("ahk" "AutoHotkey" )
+    ("cfg" "context-free grammar" )
+    ("cj" "Clojure" )
+    ("cs" "computer science" )
+    ;; tech company
+    ("gc" "Google Chrome" )
+    ("gm" "Google Map" )
+    ("macos" "Mac OS" )
+    ("msw" "Microsoft Windows" )
+    ;; programing
+    ("ev" "environment variable" )
+    ("ipa" "IP address" )
+    ("jvm" "Java Virtual Machine" )
+    ("rsi" "Repetitive Strain Injury" )
+    ("subdir" "sub-directory" )
+    ("wd" "web development" )
+    ("db" "database" )
+    ("gui3" "graphical user interface" )
+    ("oop3" "object oriented programing" )
+    ("os3" "operating system" )
+    ;; programing
+    ("eq" "==" )
+    ("r" "return" )
+    ("utf8" "-*- coding: utf-8 -*-" )
+    ;; regex
+    ("xaz" "\\([A-Za-z0-9]+\\)" )
+    ;; unicode
+    ("md" "—" )
+    ("hr" "--------------------------------------------------" )
+    ("bu" "•" )
+    ;; url
+    ("urlemacs" "http://ergoemacs.org/" )))
+(setq save-abbrevs nil)
 
-;; ;; define abbrev for specific major mode
-;; ;; the first part of the name should be the value of the variable major-mode of that mode
-;; ;; e.g. for go-mode, name should be go-mconcat
-;; (define-abbrev-table 'go-mode-abbrev-table
-;;   '(
-;;     ("for" "for i := 0; i < 4; i++ { i }")
-;;     ("if" "if x < 0 { 3 }")
-;;     ("r" "return")
-;;     ("ps" "+")
-;;     ("eq" "==")
-;;     ("pt" "fmt.Println(3)")
-;;     ("fu" "func(x int) int { return 1 }")
-;;     ("v" "var = 3")))
-;; ;;(set-default 'abbrev-mode t)
-;; ;;(global-set-key (kbd "<tab>") 'expand-abbrev)
+;; define abbrev for specific major mode
+;; the first part of the name should be the value of the variable major-mode of that mode
+;; e.g. for go-mode, name should be go-mconcat, ruby-mode-abbrev-table
+(define-abbrev-table 'go-mode-abbrev-table
+  '(
+    ("for" "for i := 0; i < 4; i++ { i }")
+    ("if" "if x < 0 { 3 }")
+    ("r" "return")
+    ("ps" "+")
+    ("eq" "==")
+    ("pt" "fmt.Println(3)")
+    ("fu" "func(x int) int { return 1 }")
+    ("v" "var = 3")))
+;;(set-default 'abbrev-mode t)
+;;(global-set-key (kbd "<tab>") 'expand-abbrev)
 
+;;(set-default-font "-outline-DejaVu Sans Mono-normal-normal-normal-mono-24-*-*-*-c-*-iso8859-1")
+(set-default-font "-outline-Monaco-normal-normal-normal-sans-24-*-*-*-p-*-iso8859-1")
+;; (set-default-font "-outline-黑体-normal-normal-normal-mono-18-*-*-*-c-*-iso8859-1")
 
 
 ;; not used temperarily
@@ -625,15 +662,12 @@ _K_: kill process
 ;;   (global-rinari-mode t))
 
 
-
-
 ;; unused key bindings
-;; C-i is bound with TAB, so don't change this.
-;; C-m is bound with RET, so don't change this.
+;; C-i is bound with TAB by default, so don't change this.
+;; C-m is bound with RET by default, so don't change this.
 
 
-
-;; org-mode configurations
+;; org-mode configurations below
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cc" 'org-capture)
@@ -646,7 +680,7 @@ _K_: kill process
 ;; ! triggers a timestamp when states are changed
 ;; @ triggers a note when states are changed
 (setq org-todo-keywords
-      '((sequence "TODO(t!)" "PENDING(p!)" "|" "DONE(d!)" "CANCELED(c!/@)")))
+      '((sequence "TODO(t!)" "PENDING(p!)" "|" "DONE(d!)" "CANCELED(c@/!)")))
 (setq org-todo-keyword-faces
       '(("PENDING" . "orange")
  	("CANCELED" . "red")))
@@ -669,11 +703,11 @@ _K_: kill process
 (setq canceled-file (expand-file-name "canceled.org" gtd-directory))
 
 ;; I don't know why org-agenda-files must be a list of string literals here, variables cannot work.
-(setq org-agenda-files '("~/.emacs.d/GTD/inbox.org"
-			 "~/.emacs.d/GTD/tasks.org"
-			 "~/.emacs.d/GTD/someday.org"
-			 "~/.emacs.d/GTD/finished.org"
-			 "~/.emacs.d/GTD/canceled.org"))
+(setq org-agenda-files '("D:\\emacs-25.3_1-x86_64\\.emacs.d\\GTD\\inbox.org"
+			 "D:\\emacs-25.3_1-x86_64\\.emacs.d\\GTD\\tasks.org"
+			 "D:\\emacs-25.3_1-x86_64\\.emacs.d\\GTD\\someday.org"
+			 "D:\\emacs-25.3_1-x86_64\\.emacs.d\\GTD\\finished.org"
+			 "D:\\emacs-25.3_1-x86_64\\.emacs.d\\GTD\\canceled.org"))
 
 
 (setq org-capture-templates '(("t" "Todo [inbox]" entry
@@ -687,19 +721,26 @@ _K_: kill process
                            (someday-file :maxlevel . 2)
                            (finished-file :maxlevel . 2)
                            (canceled-file :maxlevel . 2)))
-
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ag-arguments
+   (quote
+    ("--line-number" "--smart-case" "--column" "--stats" "--nogroup")))
+ '(counsel-projectile-mode t nil (counsel-projectile))
+ '(ibuffer-always-show-last-buffer t)
  '(package-selected-packages
    (quote
-    (highlight-thing zzz-to-char zoutline zenburn-theme youdao-dictionary yasnippet-snippets web-mode use-package typing solarized-theme smartparens ruby-compilation projectile nyan-mode neotree multiple-cursors monokai-theme meghanada magit jump js2-mode iedit hydra htmlize golden-ratio github-theme expand-region emmet-mode eclipse-theme drag-stuff dracula-theme counsel cider cheat-sh browse-kill-ring beacon all-the-icons-dired ahungry-theme ag ace-window abyss-theme))))
+    (goto-line-preview spray powerline parrot use-package key-chord ubuntu-theme solarized-theme gotham-theme monokai-theme abyss-theme github-theme dracula-theme zzz-to-char youdao-dictionary yasnippet-snippets web-mode undo-tree typing smartparens seeing-is-believing ruby-electric rsense nyan-mode multiple-cursors magit js2-mode inf-ruby hydra htmlize highlight-thing golden-ratio expand-region emmet-mode drag-stuff counsel-projectile company cider browse-kill-ring beacon ahungry-theme ag ace-window))))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(highlight-thing ((t (:inherit (quote hi-blue))))))
+ ;disabled temporarily
+
+
