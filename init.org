@@ -1,3 +1,44 @@
+;; Zhang Lei
+;; Date: 2018-05-15 Tuesday 21:11:52 CST
+;; File description: Emacs configuration
+
+(let ((gc-cons-threshold most-positive-fixnum))
+  (require 'package)
+  (setq package-enable-at-startup nil)
+  (setq package-archives	       
+		'(
+		  ;; ("melpa-stable" . "http://stable.melpa.org/packages/")
+		  ;; ("gnu" . "http://elpa.gnu.org/packages/")
+		  ;; ("marmalade" . "https://marmalade-repo.org/packages/")
+		  ;; ("gnu-cn" . "http://elpa.emacs-china.org/gnu/")
+		  ;; ("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
+		  ("gnu"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")
+		  ("melpa" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
+		  ))
+
+  
+  (package-initialize)
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package))
+  (setq package-check-signature nil)
+  (setq use-package-always-ensure t)
+
+  (org-babel-load-file (expand-file-name "~/init.org"))
+  )
+
+
+====================================================================================
+
+
+
+
+
+
+
+
+
+
 * theme
 #+begin_src emacs-lisp
   (use-package ahungry-theme
