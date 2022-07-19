@@ -1,0 +1,1127 @@
+* theme
+#+begin_src emacs-lisp
+  (use-package ahungry-theme
+    :ensure t
+    :config
+    (load-theme 'ahungry t))
+  ;; (use-package gotham-theme
+  ;;   :ensure t
+  ;;   :config
+  ;;   (load-theme 'gotham t))
+  ;; (use-package doom-themes
+  ;;   :ensure t
+  ;;   :config
+  ;;   ;; Global settings (defaults)
+  ;;   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+  ;; 	doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  ;;   (load-theme 'doom-one t)
+
+  ;;   ;; Enable flashing mode-line on errors
+  ;;   (doom-themes-visual-bell-config)
+  ;;   ;; Corrects (and improves) org-mode's native fontification.
+  ;;   (doom-themes-org-config))
+#+end_src
+* common & basic
+#+begin_src emacs-lisp
+  (use-package emacs
+    :bind (("C-M-j". nil)
+           ( "M-j" . nil)
+           ( "C-\\". nil)
+           ("C-k" . kill-whole-line)
+           ("C-r" . query-replace)
+           ([f10] . (lambda ()
+                      (interactive)
+                      (find-file (expand-file-name ".emacs" "C:\\Users\\ZeaLot\\AppData\\Roaming")))))
+    :config
+    (server-start)
+    (setq emacs-home "C:\\Users\\ZeaLot\\AppData\\Roaming\\.emacs.d")
+    (defun do-not-gc ()
+      (setq gc-cons-threshold most-positive-fixnum))
+    (defun do-gc ()
+      (setq gc-cons-threshold 800000))
+    (add-hook 'minibuffer-setup-hook #'do-not-gc)
+    (add-hook 'minibuffer-exit-hook #'do-gc)
+    (setq frame-title-format
+          (list (format "%s %%S: %%j " (system-name))
+                '(buffer-file-name "%f" (dired-directory dired-directory "%b"))))
+    (setq-default tab-width 4)
+    (prefer-coding-system 'utf-8)
+    (set-default-coding-systems 'utf-8)
+    (set-terminal-coding-system 'utf-8)
+    (set-keyboard-coding-system 'utf-8)
+    (setq default-buffer-file-coding-system 'utf-8)
+    (setq read-extended-command-predicate
+          #'command-completion-default-include-p) ;; Emacs 28: Hide commands in M-x which do not work in the current mode.
+    (setq zone-when-idle 5)
+    (blink-cursor-mode -1)
+    (set-face-attribute 'default nil :font "Monaco 12") ;; origin is 10
+    (dolist (charset '(kana han symbol cjk-misc bopomofo))
+      (set-fontset-font (frame-parameter nil 'font)
+                        charset
+                        (font-spec :family "新宋体")))
+                                          ;(set-frame-parameter (selected-frame) 'alpha '(85 . 50))
+    (setq enable-recursive-minibuffers t)
+    (setq scroll-margin 2
+          scroll-conservatively 10000)
+    (global-display-line-numbers-mode 1)
+    (setq display-line-numbers-type 'relative)
+    (setq column-number-mode t)
+    (tool-bar-mode -1)
+    (scroll-bar-mode -1)
+    (menu-bar-mode -1)
+    (delete-selection-mode t)
+    (put 'narrow-to-region 'disabled nil) ; C-x n n / C-x n w
+    (global-hl-line-mode t)
+    (setq inhibit-splash-screen t)
+    (setq make-backup-files nil)
+    (setq auto-save-default nil)
+    (fset 'yes-or-no-p 'y-or-n-p)
+    (setq url-automatic-caching t)
+    (setq visible-bell nil
+          ring-bell-function 'ignore)
+    (setq select-enable-clipboard t)
+    (setq default-fill-column 80)
+    (setq default-major-mode 'text-mode)
+    (setq tab-always-indent 'complete)
+    (setq completion-cycle-threshold 3)
+    ;; c++ style
+    (defconst nokia
+      '((c-tab-always-indent . t)
+        (c-comment-only-line-offset . 0)
+        (c-hanging-braces-alist . ((substatement-open after)
+                                   (brace-list-open)))
+        (c-cleanup-list . (comment-close-slash
+                           compact-empty-funcall))
+        (c-offsets-alist . ((substatement-open . 0)
+                            (innamespace . 0)            ;;在namespace中不缩进
+                            (case-label      . +)        ;;case标签缩进一个c-basic-offset单位
+                            (access-label . -)           ;;private/public等标签少缩进一单位
+                            (inline-open . 0)            ;;在.h文件中写函数，括号不缩进
+                            (block-open     . 0)))       ;;在一个新块开始时不缩进
+        ;;    (c-echo-syntactic-information-p t)
+        (setq comment-start "/*"
+              comment-end "*/")
+        (setq indent-tabs-mode nil))
+      "Nokia Cpp Coding Style")
+    (c-add-style "nokia" nokia)
+    (defun nokia-hook ()
+      (abbrev-mode 0)
+      (setq indent-tabs-mode nil)
+                                          ;      (setq compile-command "g++ -o -g") ;; default is make -k keepgoing
+      ;;(setq global-hl-line-mode t)
+      (c-set-style "nokia"))
+    (add-hook 'c++-mode-hook 'nokia-hook)
+    (defun indent-buffer ()
+      (interactive)
+      (indent-region (point-min) (point-max)))
+    (defun indent-region-or-buffer ()
+      (interactive)
+      list-faces-sample-text  (save-excursion
+                                (if (region-active-p)
+                                    (progn
+                                      (indent-region (region-beginning) (region-end))
+                                      (message "Indenting region...done"))
+                                  (progn
+                                    (indent-buffer)
+                                    (message "Indenting buffer...done")))))
+    (global-set-key (kbd "C-M-\\") 'indent-region-or-buffer)
+    (global-set-key (kbd "C-c C") 'capitalize-word)
+
+    (defface go-to-char-highlight
+      '((((class color) (background dark))
+         (:underline "Gold")))
+      "Face for highlight current char."
+      :group 'basic-faces)
+
+    (defvar go-to-char-highlight-face 'go-to-char-highlight
+      "The face variable for `go-to-char-highlight'.")
+
+    (defvar go-to-char-highlight-overlay nil
+      "The overlay of `go-to-char-highlight-face'.")
+
+    (defun go-to-char-highlight-overlay (highlight-point)
+      "Highlight overlay that search char."
+      (save-excursion
+        (go-to-char-clean-highlight-overlay)
+        (remove-overlays highlight-point (+ highlight-point 1) go-to-char-highlight-overlay go-to-char-highlight-face)
+        (setq go-to-char-highlight-overlay (make-overlay highlight-point (+ highlight-point 1)))
+        (overlay-put go-to-char-highlight-overlay 'face go-to-char-highlight-face)))
+
+    (defun go-to-char-clean-highlight-overlay ()
+      "Clean highlight overlay that search char."
+      (when go-to-char-highlight-overlay
+        (delete-overlay go-to-char-highlight-overlay)
+        (setq go-to-char-highlight-overlay nil)))
+    (defun go-to-char-forward (n char)
+      "Go to same character as input forward."
+      (interactive "p\ncGo to char (forward): ")
+      (unwind-protect
+          (progn
+            (search-forward (string char) nil nil n)
+            (go-to-char-highlight-overlay (- (point) 1))
+            (message "Search %c backward." char)
+            (while (char-equal (read-char) char)
+              (search-forward (string char) nil nil n)
+              (go-to-char-highlight-overlay (- (point) 1))
+              (message "Search %c backward." char))
+            (setq unread-command-events (list last-input-event)))
+        (go-to-char-clean-highlight-overlay)))
+    (global-set-key (kbd "<M-RET>") 'go-to-char-forward)
+    (defun update-lossage-buffer ()
+      "Update the \"Lossage\" buffer.
+          For this to work, visit the lossage buffer, and call
+          M-x rename-buffer Lossage RET"
+      (save-excursion
+        (let ((b (get-buffer "Lossage")))
+          (when (buffer-live-p b)
+            (with-current-buffer b
+              (revert-buffer nil 'noconfirm))))))
+                                          ;  (add-hook 'post-command-hook #'update-lossage-buffer nil 'local)
+    )
+  (use-package repeat                                                    
+    :ensure nil                                                          
+    :bind (("C-z" . repeat)                                              
+           ("C-x z" . repeat-complex-command))
+                                          ; C-x C-z suspend-frame
+    )
+  (use-package dabbrev
+    :ensure nil
+    :bind ("M-SPC" . (lambda ()
+                       (interactive)
+                       (dabbrev-completion 16)))
+    :config
+    (setq-default dabbrev-case-fold-search t) ;; dabbrev search is insensitive
+    (setq-default dabbrev-case-replace nil) ;; expansion preserve the case  
+    )
+  (use-package recentf
+    :init (recentf-mode 1)
+    :config
+    (setq recentf-max-menu-items 10)
+    (recentf-open-files)
+    )
+  (use-package find-func
+    :ensure nil
+    :bind (("C-h C-f" . find-function)
+           ("C-h C-v" . find-variable)
+           ("C-h C-k" . find-function-on-key))
+    )
+  (use-package eww
+    :ensure nil
+    :config
+                                          ;    (setq eww-search-prefix "https://www.bing.com/search?q=")
+    )
+  (use-package avoid
+    :ensure nil
+    :config
+    (mouse-avoidance-mode 'animate)
+    )
+  ;; emacs can open pictures
+  (use-package image-file
+    :ensure nil
+    :config
+    (auto-image-file-mode t)
+    )
+  ;; repeat most recently executed command.
+  (use-package repeat
+    :ensure nil
+    :bind ([f9] . repeat)
+    )
+  ;; (use-package eldoc
+  ;;   :ensure nil
+  ;;   :hook (prog-mode . eldoc-mode)
+  ;;   )
+  ;; use consult-register instead
+  ;; (use-package register
+  ;;   :ensure nil
+  ;;   :bind (("M-[" . (lambda ()
+  ;;                     (interactive)
+  ;;                     (point-to-register ?\`)))
+  ;;          ("M-]" . (lambda ()
+  ;;                     (interactive)
+  ;;                     (jump-to-register ?\`)))
+  ;;          ([f5] . (lambda ()
+  ;;                    (interactive)
+  ;;                    (window-configuration-to-register ?\~)
+  ;;                    (message "Saving window layout...done")))
+  ;;          ([f6] . (lambda ()
+  ;;                    (interactive)
+  ;;                    (jump-to-register ?\~)
+  ;;                    (message "Restoring window layout...done"))))
+  ;;   :config
+  ;;   (defalias 'r 'point-to-register)
+  ;;   (defalias 'j 'jump-to-register)
+  ;;   )
+  (use-package hi-lock
+    :ensure nil
+    :config
+    (defalias 'hl 'highlight-regexp)
+    (defalias 'uhl 'unhighlight-regexp)
+    )
+  (use-package kmacro
+    :ensure nil
+    :bind (("M-p" . move-line-up)
+           ("M-n" . move-line-down)
+           ("C-o" . newline-at-any-point)
+           ("C-j" . copy-line)
+           ([f3] . kmacro-start-macro-or-insert-counter)
+           ([f4] . kmacro-end-or-call-macro)
+           )
+    :config
+    (fset 'copy-line
+          (kmacro-lambda-form [?\C-e ?\C-  ?\M-m ?\M-w ?\C-n] 0 "%d"))
+    (fset 'vth
+          (kmacro-lambda-form [?\C-x ?1 ?\C-x ?3 ?\C-x ?4 ?b return] 0 "%d"))
+    (fset 'htv
+          (kmacro-lambda-form [?\C-x ?1 ?\C-x ?2 ?\C-x ?4 ?b return] 0 "%d"))
+    (fset 'move-line-up
+          (kmacro-lambda-form [?\C-x ?\C-t ?\C-p ?\C-p ?\M-m] 0 "%d"))
+    (fset 'move-line-down
+          (kmacro-lambda-form [?\C-n ?\C-x ?\C-t ?\C-p ?\M-m] 0 "%d"))
+    (fset 'newline-at-any-point
+          [?\C-e return])
+    )
+  (use-package simple
+    :ensure nil
+    :bind (("M-c" . copy-word-at-point)
+           ("M-k" . kill-word-at-point)
+           ("C-t" . go-to-char-forward)
+           )
+    :config
+    (defun copy-word-at-point ()
+      (interactive)
+      (let (pt)
+        (skip-chars-backward "_A-Za-z0-9")
+        (setq pt (point))
+        (skip-chars-forward "_A-Za-z0-9")
+        (kill-ring-save pt (point))
+        ))
+    (defun kill-word-at-point ()
+      (interactive)
+      (let (pt)
+        (skip-chars-backward "_A-Za-z0-9")
+        (setq pt (point))
+        (skip-chars-forward "_A-Za-z0-9")
+        (kill-region pt (point))
+        ))
+    )
+  ;; project
+  (use-package project
+    :ensure nil
+    :bind (("C-x p R" . ff-find-related-file)
+           ("C-x p G" . vc-git-grep))
+    :custom
+    (project-switch-commands
+     '(
+                                          ;(counsel-git "Find file" 102)
+                                          ;(counsel-git-grep "git grep" 103)
+       (consult-ls-git "Find file" 102)
+       (consult-git-grep "git grep" 103)
+       (project-find-dir "Find directory" nil)
+       (project-vc-dir "VC-Dir" nil)
+       (project-eshell "Eshell" nil)))
+    )
+  (use-package vc-git
+    :ensure nil
+    :config
+    (defalias '/g 'vc-git-grep)
+    )
+  (use-package hideshow
+    :ensure nil
+    :hook ((prog-mode . hs-minor-mode))
+    :config
+    (defalias 'hs 'hs-toggle-hiding)
+    )
+  ;; hightlight paired parentheses
+  (use-package paren
+    :ensure nil
+    :hook (prog-mode . show-paren-mode)
+    )
+  (use-package electric
+    :ensure nil
+    :config
+    (electric-indent-mode t)
+    )
+  (use-package elec-pair
+    :ensure nil
+    :config
+    (electric-pair-mode t)
+    )
+  (use-package winner
+    :ensure nil
+    :init (winner-mode 1)
+    :bind (("M-s <up>" . windmove-up)
+           ("M-s <down>" . windmove-down)
+           ("M-s <left>" . windmove-left)
+           ("M-s <right>" . windmove-right))
+    :config
+    (setq windmove-wrap-around t)
+    )
+  (use-package cua-rect
+    :ensure nil ;; don't load builtin
+    :bind ("C-<return>" . cua-rectangle-mark-mode)
+    )
+  (use-package dired
+    :ensure nil
+    :config
+    (add-hook 'dired-mode-hook 'dired-hide-details-mode)
+    (setq dired-dwim-target nil)
+    (setq dired-recursive-deletes 'always)
+    (setq dired-recursive-copies 'always)
+    (put 'dired-find-alternate-file 'disabled nil)
+    )
+  (use-package isearch
+    :ensure nil ;; don't load builtin
+    :config
+    (setq isearch-lazy-count t
+          lazy-count-prefix-format "%s/%s "))
+#+end_src
+* abbreviation
+#+begin_src emacs-lisp
+  (use-package abbrev
+    :ensure nil
+    :config
+    (clear-abbrev-table global-abbrev-table)
+    (define-abbrev-table 'global-abbrev-table
+      '(
+        ("tagcpp" "find $PWD -name \"*.[ch]pp\" -print | etags --declarations -")
+        ("begin" "begin\n\nend")
+        ("pull" "pull --rebase")
+        ("push" "push origin HEAD:refs/for/master")
+        )
+      (define-abbrev-table 'c++-mode-abbrev-table
+        '(
+          ("for" "for(int i = 0; i < n; i++)\n{\n}")
+          ("main" "int main()\n{\n}")
+          ("class" "class \n{\npublic:\n    () = default;\n    (const Name &other);\n    (Name &&other) noexcept;\n    virtual ~() noexcept\n    & operator=(const &other);\n    & operator=(&&other) noexcept;\nprivate:\n\n};")
+          ("if" "if()\n{\n}\n")
+          ("while" "while()\n{\n}\n")
+          )
+        )
+      ))
+#+end_src
+* ibuffer
+#+begin_src emacs-lisp
+  (use-package ibuffer
+    :ensure nil
+    :bind ("C-x C-b" . ibuffer)
+    :config
+    (setq ibuffer-saved-filter-groups
+          (quote (("default"
+                   ("dired" (mode . dired-mode))
+                   ("C++" (mode . c++-mode))
+                   ("Org" (or (mode . org-mode)
+                              (name . "^\\*Org")))
+                   ("emacs" (or (name . "^\\*scratch\\*$")
+                                (name . "^\\*Messages\\*$")
+                                (name . ".emacs")))))))
+    (add-hook 'ibuffer-mode-hook
+              (lambda ()
+                (ibuffer-switch-to-saved-filter-groups "default")))
+    (setq ibuffer-show-empty-filter-groups nil)
+    )
+#+end_src
+* window
+#+begin_src emacs-lisp
+  (use-package window
+    :ensure nil
+    :custom
+    (display-buffer-alist
+     '(("\\*e?shell\\|term\\*"
+        (display-buffer-in-side-window)
+        (window-height . 0.25)
+        (side . bottom)
+        (slot . -1)
+        (window-parameters . ((no-delete-other-windows . t))))
+       ("\\*\\(Backtrace\\|Warnings\\|Compile-Log\\|Messages\\|Calendar\\|Org Select\\)\\*"
+        (display-buffer-in-side-window)
+        (window-height . 0.25)
+        (side . bottom)
+        (slot . 0))
+       ("\\*Faces\\*"
+        (display-buffer-in-side-window)
+        (window-height . 0.25)
+        (side . bottom)
+        (slot . 1))
+       ("\\*compilation\\*"
+        (display-buffer-in-side-window)
+        (window-height . 0.25)
+        (side . bottom)
+        (slot . -2))
+       ("\\*[Hh]elp\\*"
+        (display-buffer-in-side-window)
+        (window-width . 0.25)
+        (side . right)
+        (slot . 1))
+       ("\\*Completions\\*"
+        (display-buffer-in-side-window)
+        (window-width . 0.20)
+        (side . right)
+        (slot . 1))
+       ("\\*Embark Actions\\*"
+        (display-buffer-in-side-window)
+        (window-height . 0.3)
+        (side . bottom)
+        (slot . -1)
+        (window-parameters (mode-line-format . none))))
+     )
+    :bind (([M-f4] . kill-buffer-and-window)
+           ("ESC <f4>" . kill-buffer-and-window)
+           ("M-o" . other-window))
+    :config
+    (defun siden-buffer ()
+      (interactive)
+      (let ((buf (current-buffer)))
+        (display-buffer-in-side-window
+         buf '((window-height . 0.25)
+               (side . bottom)
+               (slot . -1)
+               (window-parameters . ((no-delete-other-windows . t)))))
+        (delete-window)))
+    )
+#+end_src
+* flymake
+#+begin_src emacs-lisp
+  (use-package flymake
+    :ensure nil
+    :bind (:map flymake-mode-map
+                ("<f2> n" . flymake-goto-next-error)
+                ("<f2> p" . flymake-goto-prev-error))
+    :config
+                                          ;    (remove-hook 'flymake-diagnostic-functions 'flymake-proc-legacy-flymake)
+
+    )
+#+end_src
+* which key
+#+begin_src emacs-lisp
+  ;; (use-package which-key
+  ;;   :ensure t
+  ;;   :config
+  ;;   (which-key-mode t)
+  ;;   (which-key-setup-side-window-right-bottom))
+#+end_src
+* etags
+#+begin_src emacs-lisp
+  (use-package etags)
+                                          ;    :custom ((etags-xref-prefer-current-file t)))
+                                          ;    :config
+                                          ;  (setq etags-xref-find-definitions-tag-order '(tag-partial-file-name-match-p tag-symbol-match-p tag-exact-match-p tag-implicit-name-match-p)))
+#+end_src
+* dumb jump
+#+begin_src emacs-lisp
+  ;; (use-package dumb-jump
+  ;;   :ensure t
+  ;;   :config
+  ;;   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
+  ;;   (setq xref-show-definitions-function #'xref-show-definitions-completing-read)
+  ;;   (setq dumb-jump-force-searcher 'rg)
+  ;;   (setq dumb-jump-prefer-searcher 'rg)
+  ;;   )
+#+end_src
+* xcscope
+#+begin_src emacs-lisp
+  ;; (use-package xcscope
+  ;;   :config
+  ;;   (cscope-setup)
+  ;;   (setq cscope-option-use-inverted-index t)
+  ;;   (add-hook 'c++-mode-hook 'cscope-minor-mode)
+  ;;   (add-hook 'c-mode-hook 'cscope-minor-mode)
+  ;;   (setq cscope-indexer-ignored-directories '()))
+  ;;   (setq cscope-indexer-ignored-directories '(".git" "sdkuplane" "cplane" "L2-LO" "L2-HI" "build")))
+  ;;   )
+#+end_src
+* ivy / swiper / counsel / rich / posframe
+#+begin_src emacs-lisp
+  ;; (use-package ivy
+  ;;   :config
+  ;;   (ivy-mode 1)
+  ;;   (setq ivy-use-virtual-buffers t)
+  ;;   (setq ivy-initial-inputs-alist ()) ;; no ^ ahead
+  ;;   (setq ivy-count-format "(%d/%d) ")
+  ;;   (setq ivy-re-builders-alist
+  ;;         '((t . ivy--regex-ignore-order))) ;; orderless regex
+  ;;                                         ; (setq completion-in-region-function #'ivy-completion-in-region)
+  ;;   (global-set-key (kbd "C-c C-r") 'ivy-resume)
+  ;;   (ivy-add-actions 'counsel-describe-variable '(("=" (lambda (x)
+  ;;                                                        (counsel-set-variable (intern x)))
+  ;;                                                  "set variable temporarily")))
+  ;;   )
+  ;; (use-package swiper
+  ;;   :after ivy
+  ;;   :bind
+  ;;   ("M-s s" . swiper)
+  ;;   ("M-s M-s" . swiper-all)
+  ;;   )
+  ;; ;; save window layouts
+  ;; ;; ivy-push-view
+  ;; ;; ivy-pop-view
+  ;; ;; ivy-switch-view
+  ;; (use-package counsel
+  ;;   :after ivy
+  ;;   :bind (("C-x C-f" . counsel-find-file) ;; C-M-j to open a new file
+  ;;                                         ;	 ("C-x b" . counsel-switch-buffer)
+  ;;          ("M-y" . counsel-yank-pop)
+  ;;          ("M-x" . counsel-M-x)
+  ;;          ("C-h f" . counsel-describe-function)
+  ;;          ("C-h v" . counsel-describe-variable)
+  ;;          ("M-s i" . counsel-imenu)
+  ;;          ("M-s f" . counsel-git) ;; git ls-files
+  ;;          ("M-s g" . counsel-git-grep);; git grep
+  ;;          ("M-s b" . counsel-bookmark)
+  ;;          ("C-x C-r" . counsel-recentf)
+  ;;          ("M-s d" . counsel-dired-jump)
+  ;;          ("M-s m" . counsel-mark-ring)
+  ;;          ("M-s O" . counsel-org-goto-all) ;; need at least a org open
+  ;;          ("M-s R" . ff-find-related-file)
+  ;;          ("M-s l" . counsel-locate)
+  ;;          ("M-s r" . counsel-rg)
+  ;;          ))
+  ;; (use-package ivy-rich
+  ;;   :init (ivy-rich-mode 1)
+  ;;   :config
+  ;;   (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line) ;; ?
+  ;;   (setq ivy-rich-path-style 'abbrev)
+  ;;   )
+  ;; (use-package posframe)
+  ;; (use-package ivy-posframe
+  ;;   :after posframe
+  ;;   :init (ivy-posframe-mode 1)
+  ;;   :config
+  ;;   (setq ivy-posframe-display-functions-alist
+  ;;         '((swiper          . ivy-display-function-fallback) ;; no posframe when swipering
+  ;;           (t               . ivy-posframe-display)))
+  ;;   )
+#+end_src
+* expand region
+#+begin_src emacs-lisp
+  ;; expand or contract selected region
+  (use-package expand-region
+    :bind (("C-=" . er/expand-region)
+           ("C--" . er/contract-region)))
+#+end_src
+* company
+#+begin_src emacs-lisp
+  ;; ;; ;; complete strings
+  ;; ;; ;; (use-package company
+  ;; ;; ;;   :bind ("M-/" . company-complete)
+  ;; ;; ;;   :config
+  ;; ;; ;;   (global-company-mode)
+  ;; ;; ;;   (setq company-idle-delay
+  ;; ;; ;;       (lambda () (if (company-in-string-or-comment) nil 0)))
+  ;; ;; ;;   (setq company-global-modes '(progn-mode))
+  ;; ;; ;; ;;  (setq tab-always-indent 'complete) ;; this is completion buffer
+  ;; ;; ;;   )
+#+end_src
+* yasnippet
+#+begin_src emacs-lisp
+  ;; code templates
+  (use-package yasnippet
+    :ensure t
+    :config
+    (add-hook 'c-mode-hook 'yas-minor-mode)
+    (add-hook 'c++-mode-hook 'yas-minor-mode)
+    (add-hook 'emacs-lisp-mode-hook 'yas-minor-mode))
+  (use-package yasnippet-snippets
+    :ensure t
+    :config
+    (setq yas-wrap-around-region t))
+#+end_src
+* avy
+#+begin_src emacs-lisp
+  ;; jump to specified char conveniently
+  (use-package avy
+    :bind (("M-j" . avy-goto-char-timer)
+           :map isearch-mode-map
+           ("M-j" . avy-isearch))
+    :custom (avy-timeout-seconds 0.3)
+    :config
+    (defalias 'akr 'avy-kill-region)
+    (defalias 'acr 'avy-copy-region)
+    (defalias 'amr 'avy-move-region)
+    (setq avy-dispatch-alist nil)
+    (defun avy-action-xref-find-definition (pt)
+      (save-excursion
+        (goto-char pt)
+        (xref-find-definitions  (thing-at-point 'symbol)))
+      (select-window
+       (cdr
+        (ring-ref avy-ring 0)))
+      )
+    (defun avy-action-kill-whole-line (pt)
+      (save-excursion
+        (goto-char pt)
+        (kill-whole-line))
+      (select-window
+       (cdr
+        (ring-ref avy-ring 0)))
+      t)
+    (defun avy-action-kill-word (pt)
+      (save-excursion
+        (goto-char pt)
+        (kill-word-at-point))
+      (select-window
+       (cdr
+        (ring-ref avy-ring 0)))
+      t)
+    (defun avy-action-copy-whole-line (pt)
+      (save-excursion
+        (goto-char pt)
+        (cl-destructuring-bind (start . end)
+            (bounds-of-thing-at-point 'line)
+          (copy-region-as-kill start end)))
+      (select-window
+       (cdr
+        (ring-ref avy-ring 0)))
+      t)
+    (defun avy-action-copy-word (pt)
+      (save-excursion
+        (goto-char pt)
+        (copy-word-at-point))
+      (select-window
+       (cdr
+        (ring-ref avy-ring 0)))
+      t)
+    (defun avy-action-yank-whole-line (pt)
+      (avy-action-copy-whole-line pt)
+      (save-excursion (yank))
+      t)
+    (defun avy-action-yank-word (pt)
+      (avy-action-copy-word pt)
+      (save-excursion (yank))
+      t)
+    (defun avy-action-teleport-whole-line (pt)
+      (avy-action-kill-whole-line pt)
+      (save-excursion (yank)) t)
+    (defun avy-action-teleport-word (pt)
+      (avy-action-kill-word pt)
+      (save-excursion (yank)) t)
+    (defun avy-action-mark-to-char (pt)
+      (activate-mark)
+      (goto-char pt))
+    (defun avy-action-embark (pt)
+      (unwind-protect
+          (save-excursion
+            (goto-char pt)
+            (embark-act))
+        (select-window
+         (cdr (ring-ref avy-ring 0))))
+      t)
+    (setf (alist-get ?x avy-dispatch-alist) 'avy-action-kill-word
+          (alist-get ?X avy-dispatch-alist) 'avy-action-kill-whole-line
+          (alist-get ?y avy-dispatch-alist) 'avy-action-yank-word
+          (alist-get ?c avy-dispatch-alist) 'avy-action-copy-word
+          (alist-get ?C avy-dispatch-alist) 'avy-action-copy-whole-line
+          (alist-get ?Y avy-dispatch-alist) 'avy-action-yank-whole-line
+          (alist-get ?t avy-dispatch-alist) 'avy-action-teleport-word
+          (alist-get ?T avy-dispatch-alist) 'avy-action-teleport-whole-line
+          (alist-get ?  avy-dispatch-alist) 'avy-action-mark-to-char
+          (alist-get ?m  avy-dispatch-alist) 'avy-action-mark
+          (alist-get ?z  avy-dispatch-alist) 'avy-action-zap-to-char
+          (alist-get ?e  avy-dispatch-alist) 'avy-action-embark
+          (alist-get ?.  avy-dispatch-alist) 'avy-action-xref-find-definition)
+    )
+#+end_src
+* vertico / orderless / consult / marginalia / embark / corfu / tempel
+#+begin_src emacs-lisp
+  (use-package vertico
+    :ensure t
+    :init
+    (vertico-mode t)
+    :config
+    (defun +vertico-restrict-to-matches ()
+      (interactive)
+      (let ((inhibit-read-only t))
+        (goto-char (point-max))
+        (insert " ")
+        (add-text-properties (minibuffer-prompt-end) (point-max)
+                             '(invisible t read-only t cursor-intangible t rear-nonsticky t))))
+
+    (define-key vertico-map (kbd "C-SPC") #'+vertico-restrict-to-matches)
+    )
+  ;; builtin save history
+  (use-package savehist
+    :init
+    (savehist-mode t))
+  (use-package orderless
+    :ensure t
+    :custom
+    (completion-styles '(orderless partial-completion substring basic))
+    )
+  (use-package marginalia
+    :ensure t
+    :init
+    (marginalia-mode t)
+    :bind (:map minibuffer-local-map
+                ("M-A" . marginalia-cycle)))
+  (use-package consult
+    :ensure t
+    :init
+    ;; (setq xref-show-xrefs-function #'consult-xref
+    ;;       xref-show-definitions-function #'consult-xref)
+    (setq xref-show-xrefs-function #'xref-show-definitions-completing-read
+          xref-show-definitions-function #'consult-xref)
+    :bind (("C-x b" . consult-buffer)
+           ("C-x 4 b" . consult-buffer-other-window)
+           ("C-x 5 b" . consult-buffer-other-frame)
+           ("C-x C-r" . consult-recent-file)
+           ("M-s i" . consult-imenu)
+           ("M-s I" . consult-imenu-multi)
+           ("M-s b" . consult-bookmark)
+           ("M-g g" . consult-goto-line)
+           ("M-g M-g" . consult-goto-line)
+           ("M-s M-s" . consult-line)
+           ("M-s s" . consult-line-multi)
+           ("M-y" . consult-yank-pop)
+           ("M-s g" . consult-git-grep)
+           ("M-s m" . consult-mark)
+           ("M-s M" . consult-global-mark)
+           ("M-s k" . consult-kmacro)
+           ("M-s r" . consult-ripgrep)
+           ("C-x p b" . consult-project-buffer)
+           ("M-s l" . consult-locate)
+           ("M-s R" . ff-find-related-file)
+           ("M-g e" . consult-compile-error)
+           ("M-g f" . consult-flymake)
+           ("M-g m" . consult-mode-command)
+           ("M-g h" . consult-history)
+           ("M-g k" . consult-keep-lines)
+           ("M-g K" . consult-focus-lines)
+           ("M-[" . consult-register-store)
+           ("M-]" . consult-register)
+           )
+
+    :config
+    (setq consult-locate-args "es.exe -i -p -r") ;; -i match case -r regex -p match path
+    (setq consult-async-split-style 'perl)
+    (setq consult-narrow-key "<")
+    (setq consult-find-args "find . -not ( -path `*/.*` -prune )") ;; must be quoted
+    (use-package consult-ls-git
+      :ensure t
+      :after consult
+      :bind
+      (("M-s f" . #'consult-ls-git-ls-files)
+       ("M-s F" . #'consult-ls-git)))
+    (use-package consult-dir
+      :ensure t
+      :bind (("C-x C-d" . consult-dir)
+             :map vertico-map
+             ("C-x C-d" . consult-dir)
+             ("C-x C-j" . consult-dir-jump-file) ;; backend is consult-find
+             ("C-x g" . consult-grep)
+             ))
+    )
+  (use-package embark
+    :ensure t
+    :init
+    ;; Optionally replace the key help with a completing-read interface
+    (setq prefix-help-command #'embark-prefix-help-command)
+    :bind (("M-e" . embark-act)
+           )
+    :config
+    ;; always popup completions
+    ;;(setq embark-prompter #'embark-completing-read-prompter)
+    ;; Hide the mode line of the Embark live/completions buffers
+    (setq embark-help-key "?")
+    (add-to-list 'display-buffer-alist
+                 '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                   nil
+                   (window-parameters (mode-line-format . none))))
+    )
+
+  ;; let consult-line consult-buffer use occur
+  (use-package embark-consult
+    :ensure t
+    :after (embark consult)
+    :demand t ; only necessary if you have the hook below
+    ;; if you want to have consult previews as you move around an
+    ;; auto-updating embark collect buffer
+    :hook
+    (embark-collect-mode . consult-preview-at-point-mode))
+  (use-package corfu
+    :ensure t
+    :hook ((prog-mode . corfu-mode))
+    :bind
+    (:map corfu-map ("SPC" . corfu-insert-separator)) ;; for orderless
+    :custom
+                                          ;(corfu-auto t)
+    (corfu-separator ?\s) ;; orderless
+    :config
+    ;; enable corfu in minibuffer
+    (defun corfu-enable-always-in-minibuffer ()
+      "Enable Corfu in the minibuffer if Vertico/Mct are not active."
+      (unless (or (bound-and-true-p mct--active)
+                  (bound-and-true-p vertico--input))
+        ;; (setq-local corfu-auto nil) Enable/disable auto completion
+        (corfu-mode 1)))
+    (add-hook 'minibuffer-setup-hook #'corfu-enable-always-in-minibuffer 1)
+    ;; move corfu to minibuffer in order to embark
+    (defun corfu-move-to-minibuffer ()
+      (interactive)
+      (let ((completion-extra-properties corfu--extra)
+            completion-cycle-threshold completion-cycling)
+        (apply #'consult-completion-in-region completion-in-region--data)))
+    (define-key corfu-map (kbd "M-m") #'corfu-move-to-minibuffer)
+    )
+  (use-package tempel
+    ;; Require trigger prefix before template name when completing.
+    ;; :custom
+    ;; (tempel-trigger-prefix "<")
+
+    :bind (("M-+" . tempel-complete) ;; Alternative tempel-expand
+           ("M-*" . tempel-insert)
+           :map tempel-map
+           ("C-n" . tempel-next)
+           ("C-p" . tempel-previous)
+           ("C-g" . tempel-done)
+           )
+
+    :init
+
+    ;; Setup completion at point
+    (defun tempel-setup-capf ()
+      ;; Add the Tempel Capf to `completion-at-point-functions'.
+      ;; `tempel-expand' only triggers on exact matches. Alternatively use
+      ;; `tempel-complete' if you want to see all matches, but then you
+      ;; should also configure `tempel-trigger-prefix', such that Tempel
+      ;; does not trigger too often when you don't expect it. NOTE: We add
+      ;; `tempel-expand' *before* the main programming mode Capf, such
+      ;; that it will be tried first.
+      (setq-local completion-at-point-functions
+                  (cons #'tempel-expand
+                        completion-at-point-functions)))
+
+    (add-hook 'prog-mode-hook 'tempel-setup-capf)
+    (add-hook 'text-mode-hook 'tempel-setup-capf)
+    )
+
+  ;; TODO don't know how to decide which command not to use posframe
+  (use-package posframe
+    :ensure t
+    :config
+    (use-package vertico-posframe
+      :ensure t
+      :after (posframe vertico consult)
+      :custom
+      (vertico-posframe-border-width 2)
+      :config
+      (vertico-posframe-mode t)
+      )
+    )
+
+
+#+end_src
+* popper
+#+begin_src emacs-lisp
+  (use-package popper
+    :ensure t
+    :bind (("C-`"   . popper-toggle-latest)
+           ("M-`"   . popper-cycle)
+           ("C-M-`" . popper-toggle-type))
+    :init
+    (progn
+      (setq popper-reference-buffers
+            '("\\*Messages\\*"
+              "Output\\*$"
+              "\\*Async Shell Command\\*"
+              occur-mode
+              completion-list-mode
+              help-mode
+              compilation-mode))
+      ;; Match eshell, shell, term and/or vterm buffers
+      (setq popper-reference-buffers
+            (append popper-reference-buffers
+                    '("^\\*eshell.*\\*$" eshell-mode ;eshell as a popup
+                      "^\\*shell.*\\*$"  shell-mode  ;shell as a popup
+                      "^\\*term.*\\*$"   term-mode   ;term as a popup
+                      "^\\*vterm.*\\*$"  vterm-mode  ;vterm as a popup
+                      )))
+      (setq popper-group-function #'popper-group-by-directory)
+      (setq popper-display-control nil))
+    :config
+    (popper-mode t)
+    (popper-echo-mode t)                ; For echo area hints
+    )
+#+end_src
+* beacon
+#+begin_src emacs-lisp
+  (use-package beacon
+    :config
+    (beacon-mode 1)
+    ;; (setq beacon-color "#51afef")
+    (setq beacon-color "red")
+    ;; (setq beacon-color "#599cab")
+    (setq beacon-blink-when-focused t)
+    (setq beacon-size 60)
+    )
+#+end_src
+* hydra
+#+begin_src emacs-lisp
+  ;; ;; ;; one of my favorite pluggins!!
+  ;; ;; ;; (use-package hydra
+  ;; ;; ;;   :config
+  ;; ;; ;;   (global-set-key (kbd "C-t")
+  ;; ;; ;; 		  (defhydra hydra-table (:color pink :hint nil)
+  ;; ;; ;; 		    "
+  ;; ;; ;; ^Ins/Del^			^Cell^		^Export^
+  ;; ;; ;; ------------------------------------------------------------
+  ;; ;; ;; _i_: insert		_h_: heighten	_g_: generate source
+  ;; ;; ;; _r_: insert row		_s_: shorten
+  ;; ;; ;; _c_: insert column	_w_: widen
+  ;; ;; ;; _d_: delete row		_n_: narrow
+  ;; ;; ;; _D_: delete col		_j_: justify
+
+  ;; ;; ;;    "
+  ;; ;; ;; 		    ("i" table-insert)
+  ;; ;; ;; 		    ("r" table-insert-row)
+  ;; ;; ;; 		    ("c" table-insert-column)
+  ;; ;; ;; 		    ("d" table-delete-row)
+  ;; ;; ;; 		    ("D" table-delete-column)
+  ;; ;; ;; 		    ("h" table-heighten-cell)
+  ;; ;; ;; 		    ("s" table-shorten-cell)
+  ;; ;; ;; 		    ("w" table-widen-cell)
+  ;; ;; ;; 		    ("n" table-narrow-cell)
+  ;; ;; ;; 		    ("j" table-justify)
+  ;; ;; ;; 		    ("g" table-generate-source :color blue)
+  ;; ;; ;; 		    ("q" nil "quit" :color blue)))
+  ;; ;; ;;   (global-set-key (kbd "M-<f10>")
+#+end_src
+* tiny
+#+begin_src emacs-lisp
+  ;; (use-package tiny
+  ;;   :bind
+  ;;   (("M-'" . tiny-expand)))
+#+end_src
+* youdao dictionary
+#+begin_src emacs-lisp
+  (use-package youdao-dictionary
+    :bind ("C-c y" . youdao-dictionary-search-at-point+))
+#+end_src
+* all the icon
+#+begin_src emacs-lisp
+  (use-package all-the-icons
+    :if (display-graphic-p)
+    :config
+    (setq inhibit-compacting-font-caches t))
+  ;; dired mode icons
+  (use-package all-the-icons-dired
+    :config
+    (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+    (setq all-the-icons-dired-monochrome nil))
+
+  ;; ibuffer icons
+  (use-package all-the-icons-ibuffer
+    :config
+    (add-hook 'ibuffer-mode-hook 'all-the-icons-ibuffer-mode))
+#+end_src
+* modeline
+#+begin_src emacs-lisp
+  ;; (use-package doom-modeline
+  ;;   :ensure t
+  ;;   :init (doom-modeline-mode 1)
+  ;;   :config
+  ;;   (setq doom-modeline-support-imenu t)
+  ;;   (setq doom-modeline-height 25)
+  ;;   (setq doom-modeline-bar-width 10)
+  ;;   (setq doom-modeline-hud t)
+  ;;   (setq doom-modeline-window-width-limit 0.25)
+  ;;   (setq doom-modeline-project-detection 'auto)
+  ;;   (setq doom-modeline-buffer-file-name-style 'auto)
+  ;;   (setq doom-modeline-icon t)
+  ;;   (setq doom-modeline-major-mode-icon t)
+  ;;   (setq doom-modeline-major-mode-color-icon t)
+  ;;   (setq doom-modeline-buffer-state-icon t)
+  ;;   (setq doom-modeline-buffer-modification-icon t)
+  ;;   (setq doom-modeline-unicode-fallback nil)
+  ;;   (setq doom-modeline-buffer-name t)
+  ;;   (setq doom-modeline-minor-modes nil)
+  ;;   (setq doom-modeline-enable-word-count nil)
+  ;;   (setq doom-modeline-buffer-encoding t)
+  ;;   (setq doom-modeline-indent-info nil)
+  ;;   (setq doom-modeline-checker-simple-format t)
+  ;;   (setq doom-modeline-number-limit 99)
+  ;;   (setq doom-modeline-vcs-max-length 12)
+  ;;   (setq doom-modeline-workspace-name t)
+  ;;   (setq doom-modeline-env-load-string "...")
+  ;;   (setq doom-modeline-before-update-env-hook nil)
+  ;;   (setq doom-modeline-after-update-env-hook nil)
+  ;;   (setq inhibit-compacting-font-caches t)
+  ;;   )
+
+  (use-package powerline
+    :config
+    (powerline-default-theme)
+                                          ;    (set-face-attribute 'mode-line nil
+                                          ;			:foreground "Black"
+                                          ;			:background "#51afef"
+                                          ;			)
+    (setq powerline-default-separator 'contour)
+    )
+
+
+  (use-package nyan-mode
+    :after powerline
+    :init
+    (nyan-mode t)
+    :custom
+    (nyan-bar-length 20))
+#+end_src
+* org
+#+begin_src emacs-lisp
+  (use-package htmlize)
+
+  ;; ! triggers a timestamp when states are changed
+  ;; @ triggers a note when states are changed
+  (use-package org
+    :ensure nil ;; don't load builtin
+    :bind (("C-c l" . org-store-link)
+           ("C-c a" . org-agenda)
+           ("C-c c" . org-capture)
+           ("C-c b" . org-switchb)
+           )
+    :config
+    (setq org-directory (concat emacs-home "C:\\Users\\l8zhang\\OneDrive - Nokia"))
+    (setq todolist-file-path "C:\\Users\\l8zhang\\OneDrive - Nokia\\todolist.org"
+          mynotes-file-path "C:\\Users\\l8zhang\\OneDrive - Nokia\\mynotes.org")
+    (setq org-todo-keywords
+          '((sequence "TODO(t!)" "IN-PROGRESS(p!)" "WAITING(w!)" "|" "DONE(d!)" "CANCELED(c@)")))
+    (setq org-todo-keyword-faces
+          '(("IN-PROGRESS" . "orange")
+            ("WAITING" . "magenta")
+            ("DONE" . "green")
+            ("CANCELED" . "red")))
+    ;; 					;(setq org-tag-alist '(("@office" . ?o) ("@home" . ?h) ("@way" . ?w)))
+    ;;   (setq org-agenda-custom-commands
+    ;; 	  '(("o" "At the office" tags-todo "@office")
+    ;; 	    ("h" "At home" tags-todo "@home")
+    ;; 	    ("w" "On the way" tags-todo "@way")))
+    (setq org-agenda-files (quote ("C:\\Users\\l8zhang\\OneDrive - Nokia\\todolist.org"
+                                   "C:\\Users\\l8zhang\\OneDrive - Nokia\\mynotes.org")))
+    (setq org-default-notes-file mynotes-file-path)
+    (setq org-capture-templates '(("t" "Todo [todolist]" entry
+                                   (file+headline todolist-file-path "Todolist")
+                                   "* TODO %i%? %T %^g" :empty-lines-before 1)
+                                  ("n" "Notes" entry
+                                   (file+headline mynotes-file-path "Notes")
+                                   "* %i%? \n %T" :empty-lines-before 1 :prepend 1)))
+    (setq org-refile-targets '((todolist-file-path :maxlevel . 2)
+                               (mynotes-file-path :maxlevel . 2)))
+    (setq org-startup-folded t)
+    (setq org-startup-indented t)
+    ;;    (setq org-src-tab-acts-natively t)
+    (setq org-startup-truncated nil)
+    (setq org-return-follows-link t)
+    (setq org-startup-with-inline-images t)
+    (setq org-image-actual-width nil)
+    (setq org-hide-emphasis-markers t)
+    (setq org-fontify-done-headline t)
+    (setq org-hide-leading-stars t)
+    (setq org-pretty-entities t)
+    ;;   (setq org-odd-levels-only nil)
+    (setq org-src-fontify-natively t)
+    )
+
+  (use-package org-bullets
+    :ensure t
+    :after org
+    :config
+    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+#+end_src
